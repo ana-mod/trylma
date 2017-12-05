@@ -2,13 +2,19 @@ public class Field
 {
     private int radius;
     private Piece piece;
+    private Field field;
 
     public Field()
     {
         this.radius=-1;
     }
 
-    public Field(int )
+    public Field(int radius,Field field)
+    {
+        this.radius=radius;
+        this.field = field;
+    }
+    
     public boolean isFree()
     {
         if (piece == null)
