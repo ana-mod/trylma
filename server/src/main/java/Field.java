@@ -3,9 +3,22 @@ public class Field
     private int radius;
     private Piece piece;
 
+    public Field()
+    {
+        this.radius=-1;
+    }
+
+    public Field(int )
     public boolean isFree()
     {
-        return true;
+        if (piece == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public int getRadius()
