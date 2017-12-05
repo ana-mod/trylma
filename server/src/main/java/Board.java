@@ -11,6 +11,6 @@ public class Board
 
     public boolean isPossible(Field old, Field next)
     {
-        return true;
+        return false;
     }
 }
