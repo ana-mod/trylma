@@ -1,3 +1,7 @@
+package Game;
+
+import Game.Field;
+
 public class Row
 {
     private Field[] fields;
