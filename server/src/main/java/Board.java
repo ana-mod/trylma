@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-    private ArrayList<Row> rows;
+   /*private ArrayList<Row> rows;
 
     public void move(Field old, Field next)
     {
@@ -11,6 +11,7 @@ public class Board
 
     public boolean isPossible(Field old, Field next)
     {
-        return false;
+        return true;
     }
+	*/
 }
