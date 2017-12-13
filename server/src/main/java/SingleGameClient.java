@@ -40,6 +40,7 @@ public class SingleGameServer extends Thread
         private Socket connection;
         private BufferedReader input;
         private PrintWriter output;
+        private String nickname;
 
         public SubServer(Socket connection)
         {
@@ -55,4 +56,34 @@ public class SingleGameServer extends Thread
             }
             start();
         }
+        
+        public void run ()
+        {
+            String msg;
+            while (!isInterrupted())
+            {
+                try
+                {
+                    msg = input.readLine();
+                    if(msg == null)
+                    {
+                        clietConnections.remove(clietConnections.indexOf(this));
+                        break;
+                    }
+
+                    msg = "~"+ nickname + ": " + msg;
+
+                    for (SubServer sub : clietConnections)
+                    {
+                        sub.output.println(msg);
+                    }
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+        }
+    }
 } 
