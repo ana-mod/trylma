@@ -44,6 +44,7 @@ public class SingleGameServer extends Thread
         private Socket connection;
         private BufferedReader input;
         private PrintWriter output;
+        
         private String nickname;
 
         public SubServer(Socket connection)
@@ -53,6 +54,8 @@ public class SingleGameServer extends Thread
                 this.connection = connection;
                 this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 this.output = new PrintWriter(connection.getOutputStream(), true);
+                
+                this.nickname = input.readLine();
             }
             catch (IOException e)
             {
