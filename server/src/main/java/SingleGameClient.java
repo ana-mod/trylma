@@ -37,14 +37,17 @@ public class SingleGameServer extends Thread
     
     protected class SubServer extends Thread
     {
-
         private Socket connection;
+        private BufferedReader input;
+        private PrintWriter output;
 
         public SubServer(Socket connection)
         {
             try
             {
                 this.connection = connection;
+                this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                this.output = new PrintWriter(connection.getOutputStream(), true);
             }
             catch (IOException e)
             {
