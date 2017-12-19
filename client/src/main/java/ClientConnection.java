@@ -40,7 +40,7 @@ import java.util.Scanner;
         frame.add(frame_in, BorderLayout.PAGE_END);
 
         frame_in.addActionListener(this);
-        //frame.pack();
+
         start();
     }
 

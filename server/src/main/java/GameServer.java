@@ -1,3 +1,5 @@
+import Game.Player;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -6,12 +8,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-public class SingleGameServer extends Thread
+public class GameServer extends Thread
 {
     private ServerSocket serverSocket;
-    private Vector<SubServer> clietConnections = new Vector<SubServer>();
-    
-    public SingleGameServer (int port) throws IOException
+    private Vector<ClientHandler> clietConnections = new Vector<ClientHandler>();
+
+    public GameServer (int port) throws IOException
     {
         serverSocket = new ServerSocket(port);
         start();
@@ -33,28 +35,28 @@ public class SingleGameServer extends Thread
             System.out.println(e.getMessage());
         }
     }
-        
+
     public void addConnectionToSubServer(Socket connection)
     {
-        clietConnections.add(new SubServer(connection));
+        clietConnections.add(new ClientHandler(connection));
     }
-    
-    protected class SubServer extends Thread
+
+    protected class ClientHandler extends Thread implements Player
     {
         private Socket connection;
         private BufferedReader input;
         private PrintWriter output;
-        
+
         private String nickname;
 
-        public SubServer(Socket connection)
+        public ClientHandler (Socket connection)
         {
             try
             {
                 this.connection = connection;
                 this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 this.output = new PrintWriter(connection.getOutputStream(), true);
-                
+
                 this.nickname = input.readLine();
             }
             catch (IOException e)
@@ -63,7 +65,7 @@ public class SingleGameServer extends Thread
             }
             start();
         }
-        
+
         public void run ()
         {
             String msg;
@@ -80,7 +82,7 @@ public class SingleGameServer extends Thread
 
                     msg = "~"+ nickname + ": " + msg;
 
-                    for (SubServer sub : clietConnections)
+                    for (ClientHandler sub : clietConnections)
                     {
                         sub.output.println(msg);
                     }
@@ -92,5 +94,10 @@ public class SingleGameServer extends Thread
             }
 
         }
+
+        public void move ()
+        {
+            
+        }
     }
-} 
+}

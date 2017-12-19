@@ -6,7 +6,7 @@ public class TMPmain
     {
         try
         {
-            ServerConnectionTest s = new ServerConnectionTest(4444);
+            GameServer s = new GameServer(4444);
         }
         catch (IOException e)
         {
