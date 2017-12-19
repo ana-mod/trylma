@@ -1,4 +1,5 @@
 import Game.Player;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -57,13 +58,34 @@ public class GameServer extends Thread
                 this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 this.output = new PrintWriter(connection.getOutputStream(), true);
 
-                this.nickname = input.readLine();
+                setNickname();
             }
             catch (IOException e)
             {
                 System.out.println(e.getMessage());
             }
             start();
+        }
+
+        public void setNickname () throws IOException
+        {
+            String msg = input.readLine();
+
+            for(ClientHandler ch : clietConnections)
+            {
+                if (msg.equals(ch.getNickname()))
+                {
+                    output.println("errnicktaken");
+                    setNickname();
+                }
+            }
+            
+            this.nickname=msg;
+        }
+
+        public String getNickname ()
+        {
+            return nickname;
         }
 
         public void run ()
@@ -97,7 +119,7 @@ public class GameServer extends Thread
 
         public void move ()
         {
-            
+
         }
     }
 }
