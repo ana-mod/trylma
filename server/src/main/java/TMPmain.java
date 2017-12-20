@@ -6,7 +6,7 @@ public class TMPmain
     {
         try
         {
-            GameServer s = new GameServer(4444);
+            GameServer s = GameServer.getInstance(4444);
         }
         catch (IOException e)
         {

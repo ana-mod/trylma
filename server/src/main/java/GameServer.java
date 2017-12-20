@@ -1,5 +1,4 @@
 import Game.Player;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,11 +12,31 @@ public class GameServer extends Thread
 {
     private ServerSocket serverSocket;
     private Vector<ClientHandler> clietConnections = new Vector<ClientHandler>();
+    private static GameServer instance;
 
-    public GameServer (int port) throws IOException
+    private GameServer (int port) throws IOException
     {
         serverSocket = new ServerSocket(port);
         start();
+    }
+
+    public static GameServer getInstance(int port) throws IOException
+    {
+        if (instance != null)
+        {
+            return instance;
+        }
+        else
+        {
+            synchronized (GameServer.class)
+            {
+                if (instance == null)
+                {
+                    instance = new GameServer(port);
+                }
+            }
+            return instance;
+        }
     }
 
     @Override
