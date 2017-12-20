@@ -15,6 +15,10 @@ public class Field
         this.field = field;
     }
     
+    public boolean isOccupied(int row, int col) {
+    	return true;
+    }
+    
     public boolean isFree()
     {
         if (piece == null)
