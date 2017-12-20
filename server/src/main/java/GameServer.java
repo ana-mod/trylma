@@ -73,14 +73,16 @@ public class GameServer extends Thread
 
             for(ClientHandler ch : clietConnections)
             {
-                if (msg.equals(ch.getNickname()))
+                if (msg.equals(ch.getNickname()) && !ch.equals(this))
                 {
                     output.println("errnicktaken");
                     setNickname();
                 }
             }
-            
+
+
             this.nickname=msg;
+            System.out.println(nickname + " taken");
         }
 
         public String getNickname ()

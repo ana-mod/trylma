@@ -13,18 +13,20 @@ import java.util.Scanner;
     private BufferedReader input;
     private Socket connection;
 
+    private String nickname;
+
     private JFrame frame;
     private JTextArea frame_out;
     private JTextField frame_in;
 
 
-    public ClientConnection (int port, String nick) throws IOException
+    public ClientConnection (int port) throws IOException
     {
         this.connection = new Socket("localhost", port);
         this.output = new PrintWriter(connection.getOutputStream(), true);
         this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-        output.println(nick);
+        //setNickname(JOptionPane.showInputDialog("Select your nickname:"));
 
         frame = new JFrame();
         frame.setVisible(true);
@@ -54,6 +56,12 @@ import java.util.Scanner;
         }
     }
 
+    public void setNickname(String n)
+    {
+        this.nickname=n;
+        output.println(this.nickname);
+    }
+
     public void actionPerformed (ActionEvent e)
     {
         String msg;
@@ -72,7 +80,15 @@ import java.util.Scanner;
             {
                 try
                 {
-                    sb.append(input.readLine());
+                    String msg;
+                    do
+                    {
+                        setNickname(JOptionPane.showInputDialog("Select your nickname:"));
+                        msg = input.readLine();
+                    }
+                    while(msg.equals("errnicktaken"));
+
+                    sb.append(msg);
                     sb.append('\n');
                     frame_out.setText(sb.toString());
                 }

@@ -5,7 +5,8 @@ public class TMPmain
 {
     public static void main(String[] args) throws IOException
     {
-        String nick = JOptionPane.showInputDialog("Select your nickname:");
-        ClientConnection c = new ClientConnection(4444,nick);
+
+        ClientConnection c = new ClientConnection(4444);
+       // c.setNickname(JOptionPane.showInputDialog("Select your nickname:"));
     }
 }
