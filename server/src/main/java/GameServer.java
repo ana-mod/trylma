@@ -88,19 +88,27 @@ public class GameServer extends Thread
 
         public void setNickname () throws IOException
         {
-            String msg = input.readLine();
+            this.nickname = "";
 
-            for(ClientHandler ch : clietConnections)
+            while(this.nickname.equals(""))
             {
-                if (msg.equals(ch.getNickname()) && !ch.equals(this))
+                String msg = input.readLine();
+                boolean free = true;
+
+                for (ClientHandler ch : clietConnections)
                 {
-                    output.println("errnicktaken");
-                    setNickname();
+                    if (msg.equals(ch.getNickname()) && !ch.equals(this))
+                    {
+                        output.println("errnicktaken");
+                        free = false;
+                    }
                 }
+
+                if(free)
+                    this.nickname=msg;
             }
 
 
-            this.nickname=msg;
             System.out.println(nickname + " taken");
         }
 

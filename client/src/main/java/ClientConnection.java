@@ -49,11 +49,23 @@ import java.util.Scanner;
     @Override
     public void run ()
     {
+        String msg="";
+        do
+        {
+            try
+            {
+                setNickname(JOptionPane.showInputDialog("Select your nickname:"));
+                msg = input.readLine();
+            }
+            catch (IOException e)
+            {
+                System.out.println(e.getMessage());
+            }
+        }
+        while(msg.equals("errnicktaken"));
+
         Read t1 = new Read();
         t1.start();
-        while (!isInterrupted())
-        {
-        }
     }
 
     public void setNickname(String n)
@@ -80,15 +92,7 @@ import java.util.Scanner;
             {
                 try
                 {
-                    String msg;
-                    do
-                    {
-                        setNickname(JOptionPane.showInputDialog("Select your nickname:"));
-                        msg = input.readLine();
-                    }
-                    while(msg.equals("errnicktaken"));
-
-                    sb.append(msg);
+                    sb.append(input.readLine());
                     sb.append('\n');
                     frame_out.setText(sb.toString());
                 }
