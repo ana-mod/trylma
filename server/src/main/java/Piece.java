@@ -1,9 +1,11 @@
+//import java.util.ArrayList;
 
 public class Piece {
 
 	private int owner;
 	private int row, col;
-	Field field = new Field();
+	Board board = new Board();
+	//public ArrayList<Piece> pieces = board.getPieces();
 	
 	public Piece(int owner, int row, int col) {
 		this.owner = owner;
@@ -31,10 +33,15 @@ public class Piece {
 		return owner;
 	}
 	
+	public Piece getInstance(int row, int col){
+		if(this.row==row & this.col==col) return this;
+		return null;
+	}
+	
 	
 	public void move(int row, int col){
 		
-		if(isMovePossible(row, col) /*&& !field.isOccupied(row, col)*/) //field.isOccupied mozna dolaczyc do ismovepossible
+		if(isMovePossible(row, col) /*&& !board.isOccupied(row, col)*/) //board.isOccupied mozna dolaczyc do ismovepossible
 		{
 			setRow(row);
 			setCol(col);
@@ -56,44 +63,45 @@ public class Piece {
 			else if (col==this.col-2 && row==this.row) return true;
 			} //jesli sasiad tamtego wczesniejszego sasiada z tej samej str i tamten sasiad zajety
 		*/
-		if(!field.isOccupied(row, this.col-1))
+		
+		if(!board.isOccupied(row, this.col-1))
 		{
 			if(col==this.col-1 && row==this.row) return true;	//move one left
 		}
 		else if(col==this.col-2 && row==this.row) return true; //move two left if one left's occupied
 		
-		if(!field.isOccupied(row, this.col+1))
+		if(!board.isOccupied(row, this.col+1))
 		{
 			if(col==this.col+1 && row==this.row) return true;	//move one right
 		}
 		else if (col==this.col+2 && row==this.row) return true; // move two right if one right's occupied
 		
-		if(!field.isOccupied(this.row-1, this.col+(this.row)%2))
+		if(!board.isOccupied(this.row-1, this.col+(this.row)%2))
 		{
 			if(col==this.col+(this.row)%2 && row==this.row-1) return true; //move one right&down 
 		}
 		else if (col==this.col-1 && row==this.row-2) return true; //move two right&down if one right&down's occupied
 		
-		if(!field.isOccupied(this.row+1, this.col+(this.row)%2))
+		if(!board.isOccupied(this.row+1, this.col+(this.row)%2))
 		{
 			if(col==this.col+(this.row)%2 && row==this.row+1) return true; // move one right&up
 		}
 		else if (col==this.col-1 && row==this.row+2) return true;
 		
-		if(!field.isOccupied(this.row-1, this.col+(this.row)%2-1))
+		if(!board.isOccupied(this.row-1, this.col+(this.row)%2-1))
 		{
 			if(col==this.col+(this.row)%2-1 && row==this.row-1) return true; //move one left down
 		}
 		else if (col==this.col+1 && row==this.row-2) return true;
 		
-		if(!field.isOccupied(this.row+1, this.col+(this.row)%2-1))
+		if(!board.isOccupied(this.row+1, this.col+(this.row)%2-1))
 		{
 			if(col==this.col+(this.row)%2-1 && row==this.row+1) return true; //move one left up
 		}
 		else if (col==this.col+1 && row==this.row+2) return true;
 		
-	/*	if (col==this.col+1 && row==this.row && !field.isOccupied(row, col+1)) return true; // z prawej
-		else if (col==this.col+2 && row==this.row && field.isOccupied(row, this.col+1)) return true; // z prawej prawego
+	/*	if (col==this.col+1 && row==this.row && !board.isOccupied(row, col+1)) return true; // z prawej
+		else if (col==this.col+2 && row==this.row && board.isOccupied(row, this.col+1)) return true; // z prawej prawego
 	*/
 		return false;
 	}
