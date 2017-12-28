@@ -1,3 +1,5 @@
+package Game;
+
 public class Field
 {
     private int radius;
@@ -13,10 +15,6 @@ public class Field
     {
         this.radius=radius;
         this.field = field;
-    }
-    
-    public boolean isOccupied(int row, int col) {
-    	return true;
     }
     
     public boolean isFree()
