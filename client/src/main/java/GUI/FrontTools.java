@@ -6,15 +6,11 @@ public class FrontTools
 {
     public static String RGBtoHEX(int red, int green, int blue)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append('#');
-        sb.append(Integer.toHexString(red));
-        sb.append(Integer.toHexString(green));
-        sb.append(Integer.toHexString(blue));
-
-        return sb.toString();
+        return String.format( "#%02X%02X%02X",
+                red * 255,
+                green * 255,
+                blue * 255);
     }
-
 
     public static Color HEXtoColor(String hex)
     {
@@ -24,5 +20,13 @@ public class FrontTools
         int blue = Integer.parseInt(hex.substring(4,6),16);
 
         return Color.rgb(red,green,blue);
+    }
+
+    public static String ColortoHEX(Color c)
+    {
+        return String.format( "#%02X%02X%02X",
+                (int)( c.getRed() * 255 ),
+                (int)( c.getGreen() * 255 ),
+                (int)( c.getBlue() * 255 ) );
     }
 }
