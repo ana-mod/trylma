@@ -1,13 +1,17 @@
 package Game;
 
-//import java.util.ArrayList;
-
 public class Piece {
 
 	private int owner;
 	private int row, col;
-	Board board = new Board();
-	//public ArrayList<Piece> pieces = board.getPieces();
+	
+	Board board = Board.getInstance();
+
+	
+	/*public boolean isFree(int row, int col){
+		return !board.isOccupied(row, col);
+	}*/
+
 	
 	public Piece(int owner, int row, int col) {
 		this.owner = owner;
@@ -43,7 +47,7 @@ public class Piece {
 	
 	public void move(int row, int col){
 		
-		if(isMovePossible(row, col) /*&& !board.isOccupied(row, col)*/) //board.isOccupied mozna dolaczyc do ismovepossible
+		if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
 		{
 			setRow(row);
 			setCol(col);
@@ -106,5 +110,10 @@ public class Piece {
 		else if (col==this.col+2 && row==this.row && board.isOccupied(row, this.col+1)) return true; // z prawej prawego
 	*/
 		return false;
+	}
+	
+	@Override
+	public String toString(){
+		return "Piece"+" "+"Player:"+owner+" "+"Row:"+row+" "+"Column:"+col;
 	}
 }
