@@ -11,11 +11,24 @@ public class Board {
 //	public int piecesPerPlayer = 10; // 4+3+2+1
 	
 	public boolean[][] board = new boolean[rownum][colnum];
-	public ArrayList<Piece> pieces = new ArrayList<Piece>();	
-	
+	public static ArrayList<Piece> pieces = new ArrayList<Piece>();
+
 	public Board() {
 		initBoard();
 	}
+	
+    private static volatile Board instance;
+
+    public static Board getInstance() {
+        if (instance == null) {
+            synchronized (Board.class) {
+                if (instance == null) {
+                    instance = new Board();
+                }
+            }
+        }
+        return instance;
+    }
 	
 	public void initBoard(){
 		for (int i=0; i<rownum; i++)
@@ -26,14 +39,24 @@ public class Board {
 	}
 	
 	
-	public void createPieces(){
+	
+	public static void createPieces(){
 		
 		createPiece(0, 0, 6);
 		createPiece(0, 0, 7);
 		createPiece(0, 1, 5);
+		createPiece(0, 0, 5);
+		createPiece(0, 2, 2);
+		createPiece(0, 1, 1);
+		createPiece(0, 1, 2);
+		createPiece(0, 2, 1);
+		createPiece(0, 2, 3);
+		createPiece(0, 3, 1);
+		createPiece(0, 3, 2);
+		createPiece(0, 2, 4); // pieces created just for testing 
 	}
 	
-	public void createPiece(int Pl, int row, int col){
+	public static void createPiece(int Pl, int row, int col){
 		Piece piece = new Piece(Pl, row, col); 
 		pieces.add(piece);
 	}
@@ -56,7 +79,10 @@ public class Board {
 		}
 		return false;
 	*/
-		return true;
+		for(Piece piece : pieces) {
+			if (piece.getRow()==row && piece.getCol()==col) return true;
+		}
+		return false;
 	}
 	
 }
