@@ -27,22 +27,7 @@ import java.util.Scanner;
         this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
         //setNickname(JOptionPane.showInputDialog("Select your nickname:"));
-
-        frame = new JFrame();
-        frame.setVisible(true);
-        frame.setSize(new Dimension(500,400));
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-
-        frame_out = new JTextArea();
-        JScrollPane scroll = new JScrollPane(frame_out);
-        frame.add(scroll, BorderLayout.CENTER);
-
-        frame_in = new JTextField();
-        frame.add(frame_in, BorderLayout.PAGE_END);
-
-        frame_in.addActionListener(this);
-
+        
         start();
     }
 
