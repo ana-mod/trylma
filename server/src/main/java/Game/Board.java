@@ -13,7 +13,7 @@ public class Board {
 	public boolean[][] board = new boolean[rownum][colnum];
 	public static ArrayList<Piece> pieces = new ArrayList<Piece>();
 
-	public Board() {
+	private Board() {
 		initBoard();
 	}
 	
