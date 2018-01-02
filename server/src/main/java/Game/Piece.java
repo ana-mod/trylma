@@ -2,10 +2,10 @@ package Game;
 
 public class Piece {
 
-	private int owner;
+	private Player owner;
 	private int row, col;
 	
-	Board board = Board.getInstance();
+	Board board;// = Board.getInstance();
 
 	
 	/*public boolean isFree(int row, int col){
@@ -13,7 +13,7 @@ public class Piece {
 	}*/
 
 	
-	public Piece(int owner, int row, int col) {
+	public Piece(Player owner, int row, int col) {
 		this.owner = owner;
 		this.row = row;
 		this.col = col;
@@ -35,7 +35,7 @@ public class Piece {
 		return col;
 	}
 	
-	public int getOwner(){
+	public Player getOwner(){
 		return owner;
 	}
 	
@@ -45,12 +45,15 @@ public class Piece {
 	}
 	
 	
-	public void move(int row, int col){
+	public void move(Player owner, int row, int col){
 		
-		if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
+	if((this.owner).equals(owner))
 		{
-			setRow(row);
-			setCol(col);
+			if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
+			{
+				setRow(row);
+				setCol(col);
+			}
 		}
 	}
 	
@@ -115,5 +118,10 @@ public class Piece {
 	@Override
 	public String toString(){
 		return "Piece"+" "+"Player:"+owner+" "+"Row:"+row+" "+"Column:"+col;
+	}
+	
+	public void setBoard(Board board)
+	{
+		this.board = board;
 	}
 }

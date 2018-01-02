@@ -7,44 +7,150 @@ public class Board {
 	public final int size=4; //dlugosc boku promienia
 	public int rownum = 4*size+1;
 	public int colnum = 3*size+1;
-//	public int numberOfPlayers= 2;
+	public int numberOfPlayers;
+	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
 //	public int piecesPerPlayer = 10; // 4+3+2+1
 	
 	public boolean[][] board = new boolean[rownum][colnum];
-	public static ArrayList<Piece> pieces = new ArrayList<Piece>();
+	public ArrayList<Piece> pieces = new ArrayList<Piece>();
 
-	private Board() {
+	public Board() {
 		initBoard();
 	}
-	
+	/*
     private static volatile Board instance;
 
     public static Board getInstance() {
         if (instance == null) {
             synchronized (Board.class) {
                 if (instance == null) {
-                    instance = new Board();
+                    instance = new Board(numberOfPlayers);
                 }
             }
         }
         return instance;
-    }
+    }*/
 	
-	public void initBoard(){
-		for (int i=0; i<rownum; i++)
-			for (int j=0; j<colnum; j++)
+		public void initBoard(){
+
+			for (int i=size; i<rownum-size; i++)
+				for (int j=0; j<colnum; j++)
+				{
+					board[i][j] = true;
+				}
+
+			for (int i=0; i<size; i++){
+				for (int j=0; j<i+1; j++ )
+					board[i][((colnum-i+1)/2)-1+j]=true;
+			}
+
+			for (int i=0; i<size; i++){
+				for (int j=0; j<i+1; j++ )
+					board[rownum - i-1][((colnum-i+1)/2)-1+j]=true;
+			}
+
+			for(int i=0; i<=size; i++)
 			{
-				board[i][j] = true;
-			}		
-	}
+				for(int j=0;j<(i+1)/2-i%2;j++)
+					board[size+i][j]=false;
+
+				for(int j=colnum-1; j>=colnum-(i+1)/2; j--)
+					board[size+i][j]=false;
+			}
+
+			for(int i=0; i<=size; i++)
+			{
+				for(int j=0;j<(i+1)/2-i%2;j++)
+					board[rownum - size-i -1][j]=false;
+
+				for(int j=colnum-1; j>=colnum-(i+1)/2; j--)
+					board[rownum - size-i-1][j]=false;
+			}
+
+		}
 	
 	
+		public void initHome(){
+			for(int i=0;i<6;i++)
+				home.add(new ArrayList<Point>());
+			
+			
+			for (int i=0; i<size; i++)
+				for(int j=0; j<colnum; j++)
+					if(board[i][j]) 
+						home.get(0).add(new Point(i,j));
+			
+			for (int i=rownum-size; i<rownum; i++)
+				for(int j=0; j<colnum; j++)
+					if(board[i][j]) 
+						home.get(5).add(new Point(i,j));
+
+			for (int i=size; i<2*size; i++)
+			{
+				int j=0;
+				int index=0;
+				while(j<2*size-i)
+				{
+					if(board[i][index])
+					{
+						home.get(1).add(new Point(i,index));
+						j++;
+					}
+					index++;
+				}
+				
+				j=0;
+				index=colnum-1;
+				while(j<2*size-i)
+				{
+					if(board[i][index])
+					{
+						home.get(2).add(new Point(i,index));
+						j++;
+					}
+					index--;
+				}
+				
+				
+			}
+			
+			for (int i=rownum-size-1; i>=rownum-2*size; i--)
+			{
+				int j=0;
+				int index=0;
+				while(j<i-2*size)
+				{
+					if(board[i][index])
+					{
+						home.get(3).add(new Point(i,index));
+						j++;
+					}
+					index++;
+				}
+				
+				j=0;
+				index=colnum-1;
+				while(j<i-2*size)
+				{
+					if(board[i][index])
+					{
+						home.get(4).add(new Point(i,index));
+						j++;
+					}
+					index--;
+				}
+				
+				
+			}
+			
+		}
 	
-	public static void createPieces(){
+	
+	public void createPieces(){
 		
-		createPiece(0, 0, 6);
-		createPiece(0, 0, 7);
-		createPiece(0, 1, 5);
+		createPiece(null, 0, 6);
+		createPiece(null, 0, 7);
+	/*	createPiece(0, 1, 5);
 		createPiece(0, 0, 5);
 		createPiece(0, 2, 2);
 		createPiece(0, 1, 1);
@@ -54,10 +160,11 @@ public class Board {
 		createPiece(0, 3, 1);
 		createPiece(0, 3, 2);
 		createPiece(0, 2, 4); // pieces created just for testing 
-	}
-	
-	public static void createPiece(int Pl, int row, int col){
+	*/}
+
+	public void createPiece(Player Pl, int row, int col){
 		Piece piece = new Piece(Pl, row, col); 
+		piece.setBoard(this);
 		pieces.add(piece);
 	}
 	
@@ -83,6 +190,17 @@ public class Board {
 			if (piece.getRow()==row && piece.getCol()==col) return true;
 		}
 		return false;
+	}
+	
+	class Point
+	{
+		int x, y;
+		
+		protected Point(int x, int y)
+		{
+			this.x=x;
+			this.y=y;
+		}
 	}
 	
 }
