@@ -5,8 +5,9 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -16,18 +17,26 @@ import java.util.Vector;
 public class MainWindow extends Application
 {
     private Stage window;
-    private Color backgroundColor;
+    private MenuBar menuBar;
 
     public static void main(String[] args)
     {
         launch(args);
     }
+
     public void start (Stage primaryStage) throws Exception
     {
+        window = primaryStage;
+
+        BorderPane mainLayout = new BorderPane();
+
+        prepareMenuBar();
+        mainLayout.setTop(menuBar);
+        BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
+
         Vector<Circle> circles = new Vector<>();
         Board board = new Board();
         board.createPieces();
-
 
         for(int i=1; i < board.rownum; i++)
             for (int j=1; j < board.colnum; j++)
@@ -46,30 +55,38 @@ public class MainWindow extends Application
 
             }
 
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20,20,20,20));
-
-        javafx.scene.control.TextField input = new javafx.scene.control.TextField();
-        javafx.scene.control.Button button =  new Button("earstdyfy");
-
-        layout.getChildren().addAll(input,button);
-
         Group g = new Group();
 
         for(int i=0;i<circles.size();i++)
             g.getChildren().add(circles.get(i));
 
-        layout.getChildren().add(g);
-
-        Scene scene = new Scene(layout,300,200);
-        scene.getStylesheets().add("SceneStyle.css");
 
 
 
-        window = primaryStage;
+
+
+
+        mainLayout.setCenter(g);
+
+        Scene scene = new Scene(mainLayout,300,200);
+        //scene.getStylesheets().add("SceneStyle.css");
+
+
         window.setScene(scene);
 
 
         window.show();
+    }
+
+    private void prepareMenuBar()
+    {
+        menuBar = new MenuBar();
+        Menu options, gameRules, info;
+
+        options = new Menu("Opcje");
+        gameRules = new Menu("Zasady Gry");
+        info = new Menu("Info");
+
+        menuBar.getMenus().addAll(options, gameRules, info);
     }
 }
