@@ -34,9 +34,25 @@ public class MainWindow extends Application
         mainLayout.setTop(menuBar);
         BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
 
-        Vector<Circle> circles = new Vector<>();
+        //Board Print test
         Board board = new Board();
         board.createPieces();
+        Group boardPrint = boardPrint(board);
+        mainLayout.setCenter(boardPrint);
+
+        Scene scene = new Scene(mainLayout,300,200);
+        //scene.getStylesheets().add("SceneStyle.css");
+
+
+        window.setScene(scene);
+
+
+        window.show();
+    }
+
+    private Group boardPrint(Board board)
+    {
+        Group group = new Group();
 
         for(int i=1; i < board.rownum; i++)
             for (int j=1; j < board.colnum; j++)
@@ -47,35 +63,12 @@ public class MainWindow extends Application
                     circle.setLayoutX(i * 50.0f);
                     circle.setLayoutY(j * 50.0);
 
+                    group.getChildren().add(circle);
 
-                    circle.setOnMousePressed(e -> circle.setFill(Color.RED));
-                    circle.setOnMouseReleased(e -> circle.setFill(Color.BLACK));
-                    circles.add(circle);
                 }
-
             }
 
-        Group g = new Group();
-
-        for(int i=0;i<circles.size();i++)
-            g.getChildren().add(circles.get(i));
-
-
-
-
-
-
-
-        mainLayout.setCenter(g);
-
-        Scene scene = new Scene(mainLayout,300,200);
-        //scene.getStylesheets().add("SceneStyle.css");
-
-
-        window.setScene(scene);
-
-
-        window.show();
+        return group;
     }
 
     private void prepareMenuBar()
