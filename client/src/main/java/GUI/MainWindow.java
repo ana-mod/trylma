@@ -46,9 +46,6 @@ public class MainWindow extends Application
 
             }
 
-        backgroundColor = Color.rgb(255,248,220);
-        Color bgColor = backgroundColor;
-
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20,20,20,20));
 
@@ -64,8 +61,8 @@ public class MainWindow extends Application
 
         layout.getChildren().add(g);
 
-        layout.setStyle("-fx-background-color: " + FrontTools.ColortoHEX(backgroundColor) +";");
         Scene scene = new Scene(layout,300,200);
+        scene.getStylesheets().add("SceneStyle.css");
 
 
 
