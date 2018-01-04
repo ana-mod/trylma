@@ -5,29 +5,58 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-
-import java.util.Vector;
 
 public class MainWindow extends Application
 {
     private Stage window;
-    private Color backgroundColor;
+    private MenuBar menuBar;
+
+    private BorderPane mainLayout;
+    private VBox entryLayout;
+    private HBox lobbyLayout;
+
 
     public static void main(String[] args)
     {
         launch(args);
     }
+
     public void start (Stage primaryStage) throws Exception
     {
-        Vector<Circle> circles = new Vector<>();
-        Board board = new Board();
-        board.createPieces();
+        window = primaryStage;
 
+        mainLayout = new BorderPane();
+
+        prepareMenuBar();
+        mainLayout.setTop(menuBar);
+        BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
+
+        prepareEntryLayout();
+        mainLayout.setCenter(entryLayout);
+
+
+        //Board Print test
+
+
+        Scene scene = new Scene(mainLayout,300,200);
+        //scene.getStylesheets().add("SceneStyle.css");
+
+
+        window.setScene(scene);
+
+
+        window.show();
+    }
+
+    private Group boardPrint(Board board)
+    {
+        Group group = new Group();
 
         for(int i=1; i < board.rownum; i++)
             for (int j=1; j < board.colnum; j++)
@@ -38,41 +67,39 @@ public class MainWindow extends Application
                     circle.setLayoutX(i * 50.0f);
                     circle.setLayoutY(j * 50.0);
 
+                    group.getChildren().add(circle);
 
-                    circle.setOnMousePressed(e -> circle.setFill(Color.RED));
-                    circle.setOnMouseReleased(e -> circle.setFill(Color.BLACK));
-                    circles.add(circle);
                 }
-
             }
 
-        backgroundColor = Color.rgb(255,248,220);
-        Color bgColor = backgroundColor;
+        return group;
+    }
 
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20,20,20,20));
+    private void prepareMenuBar()
+    {
+        menuBar = new MenuBar();
+        Menu options, gameRules, info;
 
-        javafx.scene.control.TextField input = new javafx.scene.control.TextField();
-        javafx.scene.control.Button button =  new Button("earstdyfy");
+        options = new Menu("Opcje");
+        MenuItem display = new MenuItem("Wyświetlanie");
+        MenuItem connection = new MenuItem("Połączenie");
+        options.getItems().addAll(display,connection);
 
-        layout.getChildren().addAll(input,button);
+        gameRules = new Menu("Zasady Gry");
+        info = new Menu("Info");
 
-        Group g = new Group();
+        menuBar.getMenus().addAll(options, gameRules, info);
+    }
 
-        for(int i=0;i<circles.size();i++)
-            g.getChildren().add(circles.get(i));
+    private void prepareEntryLayout()
+    {
+        entryLayout = new VBox();
+        Label nicknameLabel = new Label("Pseudonim :");
+        TextField userInput = new TextField();
+        Button nextScene = new Button("nextScene");
 
-        layout.getChildren().add(g);
-
-        layout.setStyle("-fx-background-color: " + FrontTools.ColortoHEX(backgroundColor) +";");
-        Scene scene = new Scene(layout,300,200);
-
-
-
-        window = primaryStage;
-        window.setScene(scene);
+        entryLayout.getChildren().addAll(nicknameLabel, userInput, nextScene);
 
 
-        window.show();
     }
 }
