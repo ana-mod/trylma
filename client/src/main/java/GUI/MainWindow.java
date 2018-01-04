@@ -80,7 +80,10 @@ public class MainWindow extends Application
         options.getItems().addAll(display,connection);
 
         gameRules = new Menu("Zasady Gry");
-        info = new Menu("Info");
+
+        Label infoWorkaround = new Label("Info");
+        info = new Menu("", infoWorkaround);
+        infoWorkaround.setOnMouseClicked(e -> InfoWindow.displayWindow());
 
         menuBar.getMenus().addAll(options, gameRules, info);
     }
