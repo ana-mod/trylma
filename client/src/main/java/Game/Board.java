@@ -5,6 +5,17 @@ import java.util.ArrayList;
 public class Board {
 	
 	private final int size=4; //dlugosc boku promienia
+
+	public int getRownum ()
+	{
+		return rownum;
+	}
+
+	public int getColnum ()
+	{
+		return colnum;
+	}
+
 	private int rownum = 4*size+1;
 	private int colnum = 3*size+1;
 	private int numberOfPlayers;

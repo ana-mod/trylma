@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
@@ -40,16 +41,10 @@ public class MainWindow extends Application
         prepareEntryLayout();
         mainLayout.setCenter(entryLayout);
 
-
-        //Board Print test
-
-
         Scene scene = new Scene(mainLayout,300,200);
         scene.getStylesheets().add("SceneStyle.css");
 
-
         window.setScene(scene);
-
 
         window.show();
     }
@@ -58,19 +53,18 @@ public class MainWindow extends Application
     {
         Group group = new Group();
 
-        for(int i=1; i < board.rownum; i++)
-            for (int j=1; j < board.colnum; j++)
-            {
-                if(board.board[i][j])
+        for(int i=0; i<board.getRownum(); i++)
+            for(int j=0; j<board.getColnum(); j++)
+
+                if(board.getBoard()[i][j])
                 {
-                    Circle circle = new Circle(10.0f);
-                    circle.setLayoutX(i * 50.0f);
-                    circle.setLayoutY(j * 50.0);
-
+                    Circle circle = new Circle(20);
+                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
+                    circle.setLayoutY((i+1) * 50);
+                    circle.setFill(Color.RED);
+                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
                     group.getChildren().add(circle);
-
                 }
-            }
 
         return group;
     }
@@ -97,6 +91,12 @@ public class MainWindow extends Application
         Label nicknameLabel = new Label("Pseudonim :");
         TextField userInput = new TextField();
         Button nextScene = new Button("nextScene");
+
+        //test board
+        Board b = new Board();
+        b.createPieces();
+
+        nextScene.setOnAction(e -> mainLayout.setCenter(boardPrint(b)));
 
         entryLayout.getChildren().addAll(nicknameLabel, userInput, nextScene);
 
