@@ -46,13 +46,17 @@ public class Piece {
 	
 	
 	public void move(Player owner, int row, int col){
-		
-	if((this.owner).equals(owner))
+	
+		if(board.getBoard()[row][col])
 		{
-			if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
+			
+			if(this.owner==owner) //(this.owner).equals(owner) 
 			{
-				setRow(row);
-				setCol(col);
+				if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
+				{ 
+					setRow(row);
+					setCol(col);
+				}
 			}
 		}
 	}

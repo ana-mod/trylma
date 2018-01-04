@@ -9,10 +9,10 @@ public class PieceTest {
 
 	@Test
 	public void testIsMovePossible() {
-//	Piece piece1 = new Piece(0, 2, 6);
+	//Piece piece1 = new Piece(null, 2, 6);
 
-		//piece1.move(2, 7);
-		//assertEquals(piece1.getRow(), 2);
+		//piece1.move(null, 3, 6);
+		//assertEquals(piece1.getRow(), 3);
 		/*assertEquals(piece1.getCol(), 7);
 		
 		piece1.move(1, 6);
@@ -36,14 +36,16 @@ public class PieceTest {
 	@Test
 	public void test(){
 		Board board = new Board();
-		board.createPieces();
 		assertNotNull(board.getPiece(0, 6));
-		//assertEquals(board.getPieces().size(), 12);
-		board.getPiece(0, 6).move(null, 0, 8);
-		assertNull(board.getPiece(0, 6)); 	
-		assertNotNull(board.getPiece(0, 8));		
+		assertEquals(board.getPieces().size(), 12);
+	//	board.getPiece(1, 1).move(null, 3, 2);
+	//	assertNull(board.getPiece(1, 1)); 	
+	//	assertNotNull(board.getPiece(3, 2));		
 		
-	//	assertTrue(board.isOccupied(2, 5));
+		board.getPiece(0, 6).move(null, 2, 7);
+		assertNull(board.getPiece(0, 6));
+		assertNotNull(board.getPiece(2, 7));
+		assertTrue(board.isOccupied(2, 7));
 
 	}
 
