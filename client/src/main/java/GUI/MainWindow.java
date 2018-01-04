@@ -45,7 +45,7 @@ public class MainWindow extends Application
 
 
         Scene scene = new Scene(mainLayout,300,200);
-        //scene.getStylesheets().add("SceneStyle.css");
+        scene.getStylesheets().add("SceneStyle.css");
 
 
         window.setScene(scene);
