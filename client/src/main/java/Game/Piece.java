@@ -1,15 +1,19 @@
 package Game;
 
-//import java.util.ArrayList;
-
 public class Piece {
 
-	private int owner;
+	private Player owner;
 	private int row, col;
-	Board board = new Board();
-	//public ArrayList<Piece> pieces = board.getPieces();
 	
-	public Piece(int owner, int row, int col) {
+	Board board;// = Board.getInstance();
+
+	
+	/*public boolean isFree(int row, int col){
+		return !board.isOccupied(row, col);
+	}*/
+
+	
+	public Piece(Player owner, int row, int col) {
 		this.owner = owner;
 		this.row = row;
 		this.col = col;
@@ -31,7 +35,7 @@ public class Piece {
 		return col;
 	}
 	
-	public int getOwner(){
+	public Player getOwner(){
 		return owner;
 	}
 	
@@ -41,12 +45,19 @@ public class Piece {
 	}
 	
 	
-	public void move(int row, int col){
-		
-		if(isMovePossible(row, col) /*&& !board.isOccupied(row, col)*/) //board.isOccupied mozna dolaczyc do ismovepossible
+	public void move(Player owner, int row, int col){
+	
+		if(board.getBoard()[row][col])
 		{
-			setRow(row);
-			setCol(col);
+			
+			if(this.owner==owner) //(this.owner).equals(owner) 
+			{
+				if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
+				{ 
+					setRow(row);
+					setCol(col);
+				}
+			}
 		}
 	}
 	
@@ -106,5 +117,15 @@ public class Piece {
 		else if (col==this.col+2 && row==this.row && board.isOccupied(row, this.col+1)) return true; // z prawej prawego
 	*/
 		return false;
+	}
+	
+	@Override
+	public String toString(){
+		return "Piece"+" "+"Player:"+owner+" "+"Row:"+row+" "+"Column:"+col;
+	}
+	
+	public void setBoard(Board board)
+	{
+		this.board = board;
 	}
 }
