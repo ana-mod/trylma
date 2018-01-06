@@ -10,8 +10,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import Game.Board;
+import Connection.ClientConnection;
 
 public class MainWindow extends Application
 {
@@ -22,6 +25,8 @@ public class MainWindow extends Application
     private VBox entryLayout;
     private HBox lobbyLayout;
 
+    private ClientConnection clientConnection;
+
     public static void main(String[] args)
     {
         launch(args);
@@ -29,6 +34,7 @@ public class MainWindow extends Application
 
     public void start (Stage primaryStage) throws Exception
     {
+        clientConnection = new ClientConnection(4444);
         window = primaryStage;
 
         mainLayout = new BorderPane();
@@ -92,19 +98,30 @@ public class MainWindow extends Application
     {
         entryLayout = new VBox(10);
         entryLayout.setPadding(new Insets(10));
+
         Label nicknameLabel = new Label("Pseudonim :");
+
+        Label errorLabel = new Label("Pseudonim jest już zajęty");
+        errorLabel.setTextFill(Color.RED);
+
         TextField userInput = new TextField();
+        userInput.setOnAction(e -> {
+            if(clientConnection.checkNickname(userInput.getText()))
+            {
+                mainLayout.setCenter(boardPrint(new Board(6)));
+            }
+            else
+            {
+                userInput.setText("");
+                if(!entryLayout.getChildren().contains(errorLabel))
+                    entryLayout.getChildren().add(errorLabel);
+            }
+
+        });
         userInput.setMaxWidth(200);
-        Button nextScene = new Button("nextScene");
 
-        //test board
-        Board b = new Board();
-        b.createPieces();
-
-        nextScene.setOnAction(e -> mainLayout.setCenter(boardPrint(b)));
-
-        entryLayout.getChildren().addAll(nicknameLabel, userInput, nextScene);
-
+        entryLayout.getChildren().addAll(nicknameLabel, userInput);
 
     }
+
 }

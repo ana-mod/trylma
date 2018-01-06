@@ -23,47 +23,41 @@ public class ClientConnection extends Thread
         this.connection = new Socket("localhost", port);
         this.output = new PrintWriter(connection.getOutputStream(), true);
         this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-        //setNickname(JOptionPane.showInputDialog("Select your nickname:"));
-        
-        start();
     }
 
     @Override
     public void run ()
     {
-        String msg="";
-        do
-        {
-            try
-            {
-                setNickname(JOptionPane.showInputDialog("Select your nickname:"));
-                msg = input.readLine();
-            }
-            catch (IOException e)
-            {
-                System.out.println(e.getMessage());
-            }
-        }
-        while(msg.equals("errnicktaken"));
-
         Read t1 = new Read();
         t1.start();
     }
 
-    public void setNickname(String n)
+    public boolean checkNickname(String nickname)
     {
-        this.nickname=n;
-        output.println(this.nickname);
+        String msg="";
+            try
+            {
+                output.println(nickname);
+                msg = input.readLine();
+
+                if(msg.equals("errnicktaken"))
+                {
+                    return false;
+                }
+                else
+                {
+                    this.nickname = nickname;
+                    return true;
+                }
+            }
+            catch (IOException e)
+            {
+                System.out.println(e.getMessage());
+                return false;
+            }
     }
 
-    public void actionPerformed (ActionEvent e)
-    {
-        String msg;
-        msg = frame_in.getText();
-        frame_in.setText("");
-        output.println(msg);
-    }
+
 
     protected class Read extends Thread
     {
