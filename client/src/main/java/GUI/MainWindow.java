@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import Game.Board;
 import Connection.ClientConnection;
 
+import java.io.IOException;
+
 public class MainWindow extends Application
 {
     private Stage window;
@@ -34,7 +36,15 @@ public class MainWindow extends Application
 
     public void start (Stage primaryStage) throws Exception
     {
-        clientConnection = new ClientConnection(4444);
+        try
+        {
+            clientConnection = new ClientConnection(4444);
+        }
+        catch (IOException e)
+        {
+            ServerErrorWindow.displayWindow();
+        }
+
         window = primaryStage;
 
         mainLayout = new BorderPane();
