@@ -18,11 +18,21 @@ public class Board {
 	}
 	
 	public void initBoard(){
-		for (int i=0; i<rownum; i++)
+		for (int i=size; i<rownum-size; i++)
 			for (int j=0; j<colnum; j++)
 			{
 				board[i][j] = true;
 			}		
+		for (int i=0; i<size; i++){
+			for (int j=0; j<i+1; j++ )
+				board[i][((colnum-i+1)/2)-1+j]=true;
+		}
+		for (int i=0; i<size; i++){
+			for (int j=0; j<i+1; j++ )
+				board[rownum-i-1][((colnum-i+1)/2)-1+j]=true;
+		}
+		for (int i=0; i<)
+		
 	}
 	
 	
