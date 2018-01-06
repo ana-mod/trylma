@@ -1,6 +1,5 @@
 package GUI;
 
-import Game.Board;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -12,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import Game.Board;
 
 public class MainWindow extends Application
 {
@@ -21,7 +21,6 @@ public class MainWindow extends Application
     private BorderPane mainLayout;
     private VBox entryLayout;
     private HBox lobbyLayout;
-
 
     public static void main(String[] args)
     {

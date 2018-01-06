@@ -1,13 +1,11 @@
+package Connection;
+
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
-;public class ClientConnection extends Thread implements ActionListener
+public class ClientConnection extends Thread
 {
     private PrintWriter output;
     private BufferedReader input;
