@@ -108,7 +108,10 @@ public class GameServer extends Thread
                 }
 
                 if(free)
-                    this.nickname=msg;
+                {
+                    output.println("done");
+                    this.nickname = msg;
+                }
             }
 
 
