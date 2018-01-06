@@ -4,19 +4,47 @@ import java.util.ArrayList;
 
 public class Board {
 	
-	public final int size=4; //dlugosc boku promienia
-	public int rownum = 4*size+1;
-	public int colnum = 3*size+1;
-//	public int numberOfPlayers= 2;
+	private final int size=4; //dlugosc boku promienia
+
+	public int getRownum ()
+	{
+		return rownum;
+	}
+
+	public int getColnum ()
+	{
+		return colnum;
+	}
+
+	private int rownum = 4*size+1;
+	private int colnum = 3*size+1;
+	private int numberOfPlayers;
+	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
 //	public int piecesPerPlayer = 10; // 4+3+2+1
 	
-	public boolean[][] board = new boolean[rownum][colnum];
-	public ArrayList<Piece> pieces = new ArrayList<Piece>();	
-	
+	private boolean[][] board = new boolean[rownum][colnum];
+	private ArrayList<Piece> pieces = new ArrayList<Piece>();
+
 	public Board() {
 		initBoard();
+		initHome();
+		createPieces();
 	}
+	/*
+    private static volatile Board instance;
+
+    public static Board getInstance() {
+        if (instance == null) {
+            synchronized (Board.class) {
+                if (instance == null) {
+                    instance = new Board(numberOfPlayers);
+                }
+            }
+        }
+        return instance;
+    }*/
 	
+<<<<<<< HEAD
 	public void initBoard(){
 		for (int i=size; i<rownum-size; i++)
 			for (int j=0; j<colnum; j++)
@@ -34,17 +62,65 @@ public class Board {
 		for (int i=0; i<)
 		
 	}
-	
+=======
+		public void initBoard(){
+
+			for (int i=size; i<rownum-size; i++)
+				for (int j=0; j<colnum; j++)
+				{
+					getBoard()[i][j] = true;
+				}
+
+			for (int i=0; i<size; i++){
+				for (int j=0; j<i+1; j++ )
+					getBoard()[i][((colnum-i+1)/2)-1+j]=true;
+			}
+
+			for (int i=0; i<size; i++){
+				for (int j=0; j<i+1; j++ )
+					getBoard()[rownum - i-1][((colnum-i+1)/2)-1+j]=true;
+			}
+
+			for(int i=0; i<=size; i++)
+			{
+				for(int j=0;j<(i+1)/2-i%2;j++)
+					getBoard()[size+i][j]=false;
+
+				for(int j=colnum-1; j>=colnum-(i+1)/2; j--)
+					getBoard()[size+i][j]=false;
+			}
+
+			for(int i=0; i<=size; i++)
+			{
+				for(int j=0;j<(i+1)/2-i%2;j++)
+					getBoard()[rownum - size-i -1][j]=false;
+
+				for(int j=colnum-1; j>=colnum-(i+1)/2; j--)
+					getBoard()[rownum - size-i-1][j]=false;
+			}
+
+		}
 	
 	public void createPieces(){
 		
-		createPiece(0, 0, 6);
-		createPiece(0, 0, 7);
-		createPiece(0, 1, 5);
+		createPiece(null, 0, 6);
+		createPiece(null, 0, 7);
+		createPiece(null, 1, 5);
+		createPiece(null, 0, 5);
+		createPiece(null, 2, 2);
+		createPiece(null, 1, 1);
+		createPiece(null, 1, 2);
+		createPiece(null, 2, 1);
+		createPiece(null, 2, 3);
+		createPiece(null, 3, 1);
+		createPiece(null, -1, 6);
+		//createPiece(null, 3, 2);
+		createPiece(null, 2, 4); // pieces created just for testing 
 	}
-	
-	public void createPiece(int Pl, int row, int col){
+
+	public void createPiece(Player Pl, int row, int col){
 		Piece piece = new Piece(Pl, row, col); 
+		piece.setBoard(this);
 		pieces.add(piece);
 	}
 	
@@ -66,7 +142,29 @@ public class Board {
 		}
 		return false;
 	*/
-		return true;
+		for(Piece piece : pieces) {
+			if (piece.getRow()==row && piece.getCol()==col) return true;
+		}
+		return false;
+	}
+	
+	public boolean[][] getBoard() {
+		return board;
+	}
+
+	public void setBoard(boolean[][] board) {
+		this.board = board;
+	}
+
+	class Point
+	{
+		int x, y;
+		
+		protected Point(int x, int y)
+		{
+			this.x=x;
+			this.y=y;
+		}
 	}
 	
 }
