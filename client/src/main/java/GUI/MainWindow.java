@@ -61,7 +61,8 @@ public class MainWindow extends Application
                     Circle circle = new Circle(20);
                     circle.setLayoutX((j+1) * 50 + (i%2)*25);
                     circle.setLayoutY((i+1) * 50);
-                    circle.setFill(Color.RED);
+                    circle.setFill(Color.WHITE);
+                    circle.setStroke(Color.BLACK);
                     circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
                     group.getChildren().add(circle);
                 }
@@ -90,9 +91,11 @@ public class MainWindow extends Application
 
     private void prepareEntryLayout()
     {
-        entryLayout = new VBox();
+        entryLayout = new VBox(10);
+        entryLayout.setPadding(new Insets(10));
         Label nicknameLabel = new Label("Pseudonim :");
         TextField userInput = new TextField();
+        userInput.setMaxWidth(200);
         Button nextScene = new Button("nextScene");
 
         //test board
