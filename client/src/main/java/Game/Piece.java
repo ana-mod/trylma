@@ -13,8 +13,8 @@ public class Piece {
 	}*/
 
 	
-	public Piece(Player owner, int row, int col) {
-		this.owner = owner;
+	public Piece(Player player2, int row, int col) {
+		this.owner = player2;
 		this.row = row;
 		this.col = col;
 	}
@@ -45,12 +45,12 @@ public class Piece {
 	}
 	
 	
-	public void move(Player owner, int row, int col){
+	public void move(Player player, int row, int col){
 	
 		if(board.getBoard()[row][col])
 		{
 			
-			if(this.owner==owner) //(this.owner).equals(owner) 
+			if(this.owner==player) //(this.owner).equals(owner) 
 			{
 				if(isMovePossible(row, col) && !board.isOccupied(row, col)) //board.isOccupied mozna dolaczyc do ismovepossible
 				{ 

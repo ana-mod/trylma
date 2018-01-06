@@ -5,29 +5,22 @@ import java.util.ArrayList;
 public class Board {
 	
 	private final int size=4; //dlugosc boku promienia
-
-	public int getRownum ()
-	{
-		return rownum;
-	}
-
-	public int getColnum ()
-	{
-		return colnum;
-	}
-
 	private int rownum = 4*size+1;
 	private int colnum = 3*size+1;
-	private int numberOfPlayers;
 	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
 //	public int piecesPerPlayer = 10; // 4+3+2+1
 	
 	private boolean[][] board = new boolean[rownum][colnum];
 	private ArrayList<Piece> pieces = new ArrayList<Piece>();
+	
+	Play play;
+	private int numberOfPlayers; 
 
-	public Board() {
+	public Board(int number) {
 		initBoard();
-		createPieces();
+		initHome();
+		numberOfPlayers = number;
+		//createPieces(number);
 	}
 	/*
     private static volatile Board instance;
@@ -42,7 +35,7 @@ public class Board {
         }
         return instance;
     }*/
-
+	
 		public void initBoard(){
 
 			for (int i=size; i<rownum-size; i++)
@@ -81,9 +74,116 @@ public class Board {
 
 		}
 	
+	
+		public void initHome(){
+			for(int i=0;i<6;i++)
+				home.add(new ArrayList<Point>());
+			
+			
+			for (int i=0; i<size; i++)
+				for(int j=0; j<colnum; j++)
+					if(getBoard()[i][j]) 
+						home.get(0).add(new Point(i,j));
+			
+			for (int i=rownum-size; i<rownum; i++)
+				for(int j=0; j<colnum; j++)
+					if(getBoard()[i][j]) 
+						home.get(5).add(new Point(i,j));
+
+			for (int i=size; i<2*size; i++)
+			{
+				int j=0;
+				int index=0;
+				while(j<2*size-i)
+				{
+					if(getBoard()[i][index])
+					{
+						home.get(1).add(new Point(i,index));
+						j++;
+					}
+					index++;
+				}
+				
+				j=0;
+				index=colnum-1;
+				while(j<2*size-i)
+				{
+					if(getBoard()[i][index])
+					{
+						home.get(2).add(new Point(i,index));
+						j++;
+					}
+					index--;
+				}
+				
+				
+			}
+			
+			for (int i=rownum-size-1; i>=rownum-2*size; i--)
+			{
+				int j=0;
+				int index=0;
+				while(j<i-2*size)
+				{
+					if(getBoard()[i][index])
+					{
+						home.get(3).add(new Point(i,index));
+						j++;
+					}
+					index++;
+				}
+				
+				j=0;
+				index=colnum-1;
+				while(j<i-2*size)
+				{
+					if(getBoard()[i][index])
+					{
+						home.get(4).add(new Point(i,index));
+						j++;
+					}
+					index--;
+				}		
+				
+			}
+			
+		}
+	
 	public void createPieces(){
 		
-		createPiece(null, 0, 6);
+		switch(numberOfPlayers)
+		{
+		/*case 1:
+			for(Point p: home.get(0)) createPiece(play.players.get(0), p.x, p.y);
+			break;
+		*/
+			case 2:
+				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
+				for(Point p : home.get(5)) createPiece(play.players.get(1), p.x, p.y);
+				break;
+				
+			case 3:
+				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
+				for(Point p : home.get(3)) createPiece(play.players.get(1), p.x, p.y);
+				for(Point p : home.get(4)) createPiece(play.players.get(2), p.x, p.y);
+				break;
+				
+			case 4:
+				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
+				for(Point p : home.get(5)) createPiece(play.players.get(1), p.x, p.y);
+				for(Point p : home.get(1)) createPiece(play.players.get(2), p.x, p.y);
+				for(Point p : home.get(4)) createPiece(play.players.get(4), p.x, p.y);
+				break;
+				
+			case 6:
+				for (int i=0; i<6; i++)
+				{
+					for(Point p : home.get(i)) createPiece(play.players.get(i), p.x, p.y);
+				}
+				break;
+		}
+		
+	/*	createPiece(null, 0, 6);
 		createPiece(null, 0, 7);
 		createPiece(null, 1, 5);
 		createPiece(null, 0, 5);
@@ -96,10 +196,10 @@ public class Board {
 		createPiece(null, -1, 6);
 		//createPiece(null, 3, 2);
 		createPiece(null, 2, 4); // pieces created just for testing 
-	}
+	*/}
 
-	public void createPiece(Player Pl, int row, int col){
-		Piece piece = new Piece(Pl, row, col); 
+	public void createPiece(Player player2, int row, int col){
+		Piece piece = new Piece(player2, row, col); 
 		piece.setBoard(this);
 		pieces.add(piece);
 	}
@@ -135,7 +235,12 @@ public class Board {
 	public void setBoard(boolean[][] board) {
 		this.board = board;
 	}
-
+	
+	public void setPlay(Play play)
+	{
+		this.play = play;
+	}
+	
 	class Point
 	{
 		int x, y;
