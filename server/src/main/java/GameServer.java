@@ -1,3 +1,4 @@
+import Game.Play;
 import Game.Player;
 
 import java.net.ServerSocket;
@@ -12,6 +13,8 @@ public class GameServer extends Thread
 {
     private ServerSocket serverSocket;
     private Vector<ClientHandler> clietConnections = new Vector<ClientHandler>();
+    private Vector<Play> games = new Vector<Play>();
+
     private static GameServer instance;
 
     private GameServer (int port) throws IOException
