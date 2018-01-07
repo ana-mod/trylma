@@ -2,6 +2,7 @@ package Connection;
 
 import Game.Play;
 import Game.Player;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -58,6 +59,12 @@ public class GameServer extends Thread
         }
     }
 
+    private void sendGamesInfo(ClientHandler clientHandler) throws IOException
+    {
+            //clientHandler.output.writeObject(new GameTableInfo(1,2));
+            //clientHandler.output.flush();
+            clientHandler.output.writeObject(new EndOfTransfer());
+    }
     public void addConnectionToSubServer(Socket connection)
     {
         clietConnections.add(new ClientHandler(connection));
@@ -116,9 +123,6 @@ public class GameServer extends Thread
                     this.nickname = msg;
                 }
             }
-
-
-            System.out.println(nickname + " taken");
         }
 
         public String getNickname ()
@@ -128,26 +132,27 @@ public class GameServer extends Thread
 
         public void run ()
         {
-            String msg;
+            Object msg;
             while (!isInterrupted())
             {
                 try
                 {
-                    msg = input.readLine();
+                    msg = input.readObject();
                     if(msg == null)
                     {
                         clietConnections.remove(clietConnections.indexOf(this));
                         break;
                     }
-
-                    msg = "~"+ nickname + ": " + msg;
-
-                    for (ClientHandler sub : clietConnections)
+                    if(msg instanceof GetGamesInfo)
                     {
-                        sub.output.writeBytes(msg);
+                        sendGamesInfo(this);
                     }
                 }
                 catch (IOException e)
+                {
+                    System.out.println(e.getMessage());
+                }
+                catch (ClassNotFoundException e)
                 {
                     System.out.println(e.getMessage());
                 }

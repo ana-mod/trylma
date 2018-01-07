@@ -1,5 +1,9 @@
 package GUI;
 
+import Connection.GameTableInfo;
+import GUI.OtherWindows.GameRulesWindow;
+import GUI.OtherWindows.InfoWindow;
+import GUI.OtherWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import Game.Board;
@@ -77,7 +80,10 @@ public class MainWindow extends Application
         MenuItem connection = new MenuItem("Połączenie");
         options.getItems().addAll(display,connection);
 
-        gameRules = new Menu("Zasady Gry");
+
+        Label gameRulesWorkaround = new Label("Zasady Gry");
+        gameRules = new Menu("", gameRulesWorkaround);
+        gameRulesWorkaround.setOnMouseClicked(e -> GameRulesWindow.displayWindow());
 
         Label infoWorkaround = new Label("Info");
         info = new Menu("", infoWorkaround);
@@ -100,7 +106,7 @@ public class MainWindow extends Application
         userInput.setOnAction(e -> {
             try
             {
-                boolean isFree = clientConnection.checkNickname(userInput.getText());
+                boolean isFree = clientConnection.setNickname(userInput.getText());
                 if(isFree)
                 {
                     prepareLobbyLayout();
@@ -113,6 +119,10 @@ public class MainWindow extends Application
                         entryLayout.getChildren().add(errorLabel);
                 }
             }
+            catch (IOException er)
+            {
+                ServerErrorWindow.displayWindow();
+            }
             catch (ClassNotFoundException er)
             {
                 ServerErrorWindow.displayWindow();
@@ -124,7 +134,7 @@ public class MainWindow extends Application
 
     }
 
-    private void prepareLobbyLayout()
+    private void prepareLobbyLayout() throws IOException, ClassNotFoundException
     {
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
@@ -143,7 +153,7 @@ public class MainWindow extends Application
         maxColumn.setMinWidth(100);
         maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPlayers"));
 
-        tableInfoTableView.setItems(tmp());
+        tableInfoTableView.setItems(clientConnection.getGamesInfo());
         tableInfoTableView.getColumns().addAll(nameColumn, playersColumn, maxColumn);
         tableInfoTableView.setMaxHeight(600);
         tableInfoTableView.setMaxWidth(403);
@@ -158,19 +168,6 @@ public class MainWindow extends Application
         lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
 
     }
-
-    private ObservableList<GameTableInfo> tmp()
-    {
-        ObservableList<GameTableInfo> list = FXCollections.observableArrayList();
-        list.addAll(new GameTableInfo(3,3));
-        list.addAll(new GameTableInfo(1,3));
-        list.addAll(new GameTableInfo(4,6));
-        list.addAll(new GameTableInfo(2,4));
-        list.addAll(new GameTableInfo(2,2));
-
-        return list;
-    }
-
 
     private Group boardPrint(Board board)
     {

@@ -1,6 +1,8 @@
-package GUI;
+package Connection;
 
-public class GameTableInfo
+import java.io.Serializable;
+
+public class GameTableInfo implements Serializable
 {
     private String title;
     private int maxPlayers;

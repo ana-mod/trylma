@@ -1,33 +1,39 @@
-package GUI;
+package GUI.OtherWindows;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class InfoWindow
+public class ServerErrorWindow
 {
-    private static InfoWindow instance;
+    private static ServerErrorWindow instance;
 
     private Stage window;
     private Scene scene;
     private VBox layout;
     private Label messageBox;
 
-    private String message = "aaaa info message";
+    private String message = "aaaa error message";
 
-    private InfoWindow()
+    private ServerErrorWindow()
     {
         window = new Stage();
-        window.setTitle("Info");
+        window.setTitle("Server Connection Error");
         window.initModality(Modality.APPLICATION_MODAL);
         window.setMinWidth(250);
 
+        window.setOnCloseRequest(e -> System.exit(-1));
+
         messageBox = new Label(message);
 
+        Button exitButton = new Button("exit");
+        exitButton.setOnAction(e -> System.exit(-1));
+
         layout = new VBox();
-        layout.getChildren().add(messageBox);
+        layout.getChildren().addAll(messageBox, exitButton);
 
         scene = new Scene(layout);
 
@@ -42,11 +48,11 @@ public class InfoWindow
         }
         else
         {
-            synchronized (InfoWindow.class)
+            synchronized (ServerErrorWindow.class)
             {
                 if (instance == null)
                 {
-                    instance = new InfoWindow();
+                    instance = new ServerErrorWindow();
                 }
             }
             instance.display();

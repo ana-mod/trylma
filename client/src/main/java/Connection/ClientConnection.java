@@ -1,7 +1,9 @@
 package Connection;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.io.*;
 import java.net.Socket;
 
@@ -32,7 +34,7 @@ public class ClientConnection extends Thread
         t1.start();
     }
 
-    public boolean checkNickname(String nickname) throws ClassNotFoundException
+    public boolean setNickname(String nickname) throws ClassNotFoundException
     {
             try
             {
@@ -54,6 +56,25 @@ public class ClientConnection extends Thread
                 System.out.println(e.getMessage());
                 return false;
             }
+    }
+
+    public ObservableList<GameTableInfo> getGamesInfo() throws IOException, ClassNotFoundException
+    {
+        output.writeObject(new GetGamesInfo());
+        output.flush();
+        ObservableList<GameTableInfo> list = FXCollections.observableArrayList();
+
+        Object recived = input.readObject();
+        while (recived instanceof GameTableInfo)
+        {
+            list.add((GameTableInfo) recived);
+            recived = null;
+            recived = input.readObject();
+            if(recived instanceof EndOfTransfer)
+                break;
+        }
+
+        return list;
     }
 
 
