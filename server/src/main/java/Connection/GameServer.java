@@ -1,13 +1,12 @@
+package Connection;
+
 import Game.Play;
 import Game.Player;
 
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
 public class GameServer extends Thread
 {
@@ -67,8 +66,8 @@ public class GameServer extends Thread
     protected class ClientHandler extends Thread implements Player
     {
         private Socket connection;
-        private BufferedReader input;
-        private PrintWriter output;
+        private ObjectInputStream input;
+        private ObjectOutputStream output;
 
         private String nickname;
 
@@ -77,8 +76,8 @@ public class GameServer extends Thread
             try
             {
                 this.connection = connection;
-                this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                this.output = new PrintWriter(connection.getOutputStream(), true);
+                this.output = new ObjectOutputStream(connection.getOutputStream());
+                this.input = new ObjectInputStream(connection.getInputStream());
 
                 setNickname();
             }
@@ -86,30 +85,34 @@ public class GameServer extends Thread
             {
                 System.out.println(e.getMessage());
             }
+            catch (ClassNotFoundException e)
+            {
+                System.out.println(e.getMessage());
+            }
             start();
         }
 
-        public void setNickname () throws IOException
+        public void setNickname () throws IOException, ClassNotFoundException
         {
             this.nickname = "";
 
             while(this.nickname.equals(""))
             {
-                String msg = input.readLine();
+                String msg = (String)input.readObject();
                 boolean free = true;
 
                 for (ClientHandler ch : clietConnections)
                 {
                     if (msg.equals(ch.getNickname()) && !ch.equals(this))
                     {
-                        output.println("errnicktaken");
+                        output.writeObject(new NickTaken());
                         free = false;
                     }
                 }
 
                 if(free)
                 {
-                    output.println("done");
+                    output.writeObject(new Success());
                     this.nickname = msg;
                 }
             }
@@ -141,7 +144,7 @@ public class GameServer extends Thread
 
                     for (ClientHandler sub : clietConnections)
                     {
-                        sub.output.println(msg);
+                        sub.output.writeBytes(msg);
                     }
                 }
                 catch (IOException e)
