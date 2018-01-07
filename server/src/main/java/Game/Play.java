@@ -32,7 +32,7 @@ public class Play {
 	}
 	
 	public void createBoard(){
-		board = new Board(numberOfPlayers, players);
+		board = new Board(players);
 		board.createPieces();
 	}
 	

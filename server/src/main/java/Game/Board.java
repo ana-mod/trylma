@@ -8,18 +8,25 @@ public class Board {
 	private int rownum = 4*size+1;
 	private int colnum = 3*size+1;
 	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
-	
 	private boolean[][] board = new boolean[rownum][colnum];
 	private ArrayList<Piece> pieces = new ArrayList<Piece>();
 	private ArrayList<Player> players;
-	
 	private int numberOfPlayers; 
-
-	public Board(int number, ArrayList<Player> players) {
+	private ArrayList<Piece> piecesPerPlayer = new ArrayList<Piece>();
+	
+	public int getRownum(){
+		return rownum;
+	}
+	
+	public int getColnum(){
+		return colnum;
+	}
+	
+	public Board(ArrayList<Player> players) {
 		this.players = players;
 		initBoard();
 		initHome();
-		numberOfPlayers = number;
+		numberOfPlayers = players.size();
 		
 	}
 
@@ -169,8 +176,8 @@ public class Board {
 		
 	}
 
-	public void createPiece(Player player2, int row, int col, ArrayList<Point> dest){
-		Piece piece = new Piece(player2, row, col, dest); 
+	public void createPiece(Player player, int row, int col, ArrayList<Point> dest){
+		Piece piece = new Piece(player, row, col, dest); 
 		piece.setBoard(this);
 		pieces.add(piece);
 	}
@@ -206,9 +213,41 @@ public class Board {
 /*	public void setBoard(boolean[][] board) {
 		this.board = board;
 	}
+	
+	
 */
-	public int getNumberOfPlayers(){
-		return numberOfPlayers;
+	public ArrayList<Piece> getPiecesPerPlayer(Player player) {
+		
+		if(piecesPerPlayer.size()==10) return piecesPerPlayer;
+		
+		for (Piece piece : pieces)
+		{
+			if(piece.getOwner()==player) piecesPerPlayer.add(piece);
+		}
+		return piecesPerPlayer;
+		
+	}
+	
+	public boolean end(Player player) { //needs mastering probably
+
+		this.getPiecesPerPlayer(player);
+		
+		for (Piece piece : piecesPerPlayer)
+		{
+			if(!piece.isInDest()) return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean end () {
+		
+		for (Player player : players)
+		{
+			if(!end(player)) return false;
+		}
+		
+		return true;
 	}
 	
 	class Point
@@ -221,5 +260,7 @@ public class Board {
 			this.y=y;
 		}
 	}
+	
+	
 	
 }

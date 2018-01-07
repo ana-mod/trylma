@@ -41,6 +41,10 @@ public class Piece {
 		return owner;
 	}
 	
+	public boolean isInDest(){
+		return isInDest;
+	}
+	
 	public Piece getInstance(int row, int col){
 		if(this.row==row & this.col==col) return this;
 		return null;
@@ -66,11 +70,10 @@ public class Piece {
 		if(this.owner!=player) return;				// if player isn't owner of this piece, return;
 		if(!isMovePossible(row, col)) return;		// if piece wants to make wrong move, return;
 		if(board.isOccupied(row, col)) return;		// if piece wants to make move on occupied field, return
-	//	for(Point p : dest) if(p.x==this.row && p.y==this.col)
 		if(isInDest) 
 		{
 			for(Point point : dest) if(point.x==row && point.y==col) break;
-			return;//if piece is in its destination triangle and wants to leave it, return;
+			return;									//if piece is in its destination triangle and wants to leave it, return;
 		}
 		//else - move is made:
 		if(Math.abs(this.row-row)==2 || Math.abs(this.col-col)==2) jump=true; 
