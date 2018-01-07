@@ -1,10 +1,13 @@
 package GUI;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,7 +28,7 @@ public class MainWindow extends Application
 
     private BorderPane mainLayout;
     private VBox entryLayout;
-    private HBox lobbyLayout;
+    private VBox lobbyLayout;
 
     private ClientConnection clientConnection;
 
@@ -64,27 +67,6 @@ public class MainWindow extends Application
         window.show();
     }
 
-    private Group boardPrint(Board board)
-    {
-        Group group = new Group();
-
-        for(int i=0; i<board.getRownum(); i++)
-            for(int j=0; j<board.getColnum(); j++)
-
-                if(board.getBoard()[i][j])
-                {
-                    Circle circle = new Circle(20);
-                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
-                    circle.setLayoutY((i+1) * 50);
-                    circle.setFill(Color.WHITE);
-                    circle.setStroke(Color.BLACK);
-                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
-                    group.getChildren().add(circle);
-                }
-
-        return group;
-    }
-
     private void prepareMenuBar()
     {
         menuBar = new MenuBar();
@@ -118,7 +100,8 @@ public class MainWindow extends Application
         userInput.setOnAction(e -> {
             if(clientConnection.checkNickname(userInput.getText()))
             {
-                mainLayout.setCenter(boardPrint(new Board(6)));
+                prepareLobbyLayout();
+                mainLayout.setCenter(lobbyLayout);
             }
             else
             {
@@ -132,6 +115,74 @@ public class MainWindow extends Application
 
         entryLayout.getChildren().addAll(nicknameLabel, userInput);
 
+    }
+
+    private void prepareLobbyLayout()
+    {
+        lobbyLayout = new VBox(10);
+        lobbyLayout.setPadding(new Insets(10));
+
+        TableView<GameTableInfo> tableInfoTableView = new TableView<>();
+
+        TableColumn<GameTableInfo, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setMinWidth(200);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        TableColumn<GameTableInfo, Integer> playersColumn = new TableColumn<>("Players");
+        playersColumn.setMinWidth(100);
+        playersColumn.setCellValueFactory(new PropertyValueFactory<>("currentPlayers"));
+
+        TableColumn<GameTableInfo, Integer> maxColumn = new TableColumn<>("Max");
+        maxColumn.setMinWidth(100);
+        maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPlayers"));
+
+        tableInfoTableView.setItems(tmp());
+        tableInfoTableView.getColumns().addAll(nameColumn, playersColumn, maxColumn);
+        tableInfoTableView.setMaxHeight(600);
+        tableInfoTableView.setMaxWidth(403);
+
+        Button newGameButton = new Button("Nowa Gra");
+        Button joinGameButton = new Button("Połącz");
+
+        HBox hBox = new HBox(10);
+        hBox.getChildren().addAll(newGameButton,joinGameButton);
+
+        lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
+
+    }
+
+    private ObservableList<GameTableInfo> tmp()
+    {
+        ObservableList<GameTableInfo> list = FXCollections.observableArrayList();
+        list.addAll(new GameTableInfo(3,3));
+        list.addAll(new GameTableInfo(1,3));
+        list.addAll(new GameTableInfo(4,6));
+        list.addAll(new GameTableInfo(2,4));
+        list.addAll(new GameTableInfo(2,2));
+
+        return list;
+    }
+
+
+    private Group boardPrint(Board board)
+    {
+        Group group = new Group();
+
+        for(int i=0; i<board.getRownum(); i++)
+            for(int j=0; j<board.getColnum(); j++)
+
+                if(board.getBoard()[i][j])
+                {
+                    Circle circle = new Circle(20);
+                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
+                    circle.setLayoutY((i+1) * 50);
+                    circle.setFill(Color.WHITE);
+                    circle.setStroke(Color.BLACK);
+                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
+                    group.getChildren().add(circle);
+                }
+
+        return group;
     }
 
 }
