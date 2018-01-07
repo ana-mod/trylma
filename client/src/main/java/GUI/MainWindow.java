@@ -98,18 +98,25 @@ public class MainWindow extends Application
 
         TextField userInput = new TextField();
         userInput.setOnAction(e -> {
-            if(clientConnection.checkNickname(userInput.getText()))
+            try
             {
-                prepareLobbyLayout();
-                mainLayout.setCenter(lobbyLayout);
+                boolean isFree = clientConnection.checkNickname(userInput.getText());
+                if(isFree)
+                {
+                    prepareLobbyLayout();
+                    mainLayout.setCenter(lobbyLayout);
+                }
+                else
+                {
+                    userInput.setText("");
+                    if(!entryLayout.getChildren().contains(errorLabel))
+                        entryLayout.getChildren().add(errorLabel);
+                }
             }
-            else
+            catch (ClassNotFoundException er)
             {
-                userInput.setText("");
-                if(!entryLayout.getChildren().contains(errorLabel))
-                    entryLayout.getChildren().add(errorLabel);
+                ServerErrorWindow.displayWindow();
             }
-
         });
         userInput.setMaxWidth(200);
 
@@ -142,6 +149,7 @@ public class MainWindow extends Application
         tableInfoTableView.setMaxWidth(403);
 
         Button newGameButton = new Button("Nowa Gra");
+
         Button joinGameButton = new Button("Połącz");
 
         HBox hBox = new HBox(10);

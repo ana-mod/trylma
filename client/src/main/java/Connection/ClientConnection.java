@@ -7,8 +7,8 @@ import java.net.Socket;
 
 public class ClientConnection extends Thread
 {
-    private PrintWriter output;
-    private BufferedReader input;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
     private Socket connection;
 
     private String nickname;
@@ -21,8 +21,8 @@ public class ClientConnection extends Thread
     public ClientConnection (int port) throws IOException
     {
         this.connection = new Socket("localhost", port);
-        this.output = new PrintWriter(connection.getOutputStream(), true);
-        this.input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        this.output = new ObjectOutputStream(connection.getOutputStream());
+        this.input = new ObjectInputStream(connection.getInputStream());
     }
 
     @Override
@@ -32,15 +32,14 @@ public class ClientConnection extends Thread
         t1.start();
     }
 
-    public boolean checkNickname(String nickname)
+    public boolean checkNickname(String nickname) throws ClassNotFoundException
     {
-        String msg="";
             try
             {
-                output.println(nickname);
-                msg = input.readLine();
+                output.writeObject(nickname);
+                Object msg = input.readObject();
 
-                if(msg.equals("errnicktaken"))
+                if(msg instanceof NickTaken)
                 {
                     return false;
                 }
