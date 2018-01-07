@@ -14,22 +14,21 @@ public class Main {
 		pl.addPlayer(player);
 		pl.addPlayer(player2);
 		//System.out.println(pl.players);
-		Board b = new Board(pl.players.size());
-		b.setPlay(pl);
-		b.createPieces();
+		pl.createBoard();
 		for(int i=0;i<6;i++)
 		{
-			for(Point p : b.home.get(i))
+			for(Point p : pl.getBoard().home.get(i))
 				System.out.print(p.x + " " + p.y + " ");
 			System.out.println();
 		}
-	System.out.println(b.getPieces());	
-	System.out.println(b.getPiece(0, 6));
-	System.out.println(b.getPiece(2, 7));
-	b.getPiece(2, 7).move(player, 4, 8);
-	System.out.println(b.getPiece(2, 7));
-	System.out.println(b.getPiece(4, 8));
-	System.out.println(b.getBoard()[0][6]);
+	System.out.println(pl.getBoard().getPieces());	
+	System.out.println(pl.getBoard().getPiece(0, 6));
+	System.out.println(pl.getBoard().getPiece(2, 7));
+	pl.getBoard().getPiece(2, 7).move(player, 4, 8);
+	System.out.println(pl.getBoard().getPiece(2, 7));
+	System.out.println(pl.getBoard().getPiece(4, 8));
+	pl.getBoard().getPiece(4, 8).move(player, 4, 9);
+	System.out.println(pl.getBoard().getBoard()[0][6]);
 	}
 
 }

@@ -1,22 +1,24 @@
 package Game;
 
+import java.util.ArrayList;
+
+import Game.Board.Point;
+
 public class Piece {
 
 	private Player owner;
 	private int row, col;
-	
-	Board board;// = Board.getInstance();
+	private boolean jump = false;
+	private boolean isInDest = false;
+	private ArrayList<Point> dest;
+	Board board;
 
 	
-	/*public boolean isFree(int row, int col){
-		return !board.isOccupied(row, col);
-	}*/
-
-	
-	public Piece(Player player2, int row, int col) {
+	public Piece(Player player2, int row, int col, ArrayList<Point> dest) {
 		this.owner = player2;
 		this.row = row;
 		this.col = col;
+		this.dest = dest;
 	}
 	
 	public void setRow(int row){
@@ -47,7 +49,7 @@ public class Piece {
 	
 	public void move(Player player, int row, int col){
 	
-		if(board.getBoard()[row][col])
+/*		if(board.getBoard()[row][col])
 		{
 			
 			if(this.owner==player) //(this.owner).equals(owner) 
@@ -59,6 +61,25 @@ public class Piece {
 				}
 			}
 		}
+	*/
+		if(!board.getBoard()[row][col]) return; 	// if field isn't in board, return;
+		if(this.owner!=player) return;				// if player isn't owner of this piece, return;
+		if(!isMovePossible(row, col)) return;		// if piece wants to make wrong move, return;
+		if(board.isOccupied(row, col)) return;		// if piece wants to make move on occupied field, return
+	//	for(Point p : dest) if(p.x==this.row && p.y==this.col)
+		if(isInDest) 
+		{
+			for(Point point : dest) if(point.x==row && point.y==col) break;
+			return;//if piece is in its destination triangle and wants to leave it, return;
+		}
+		//else - move is made:
+		if(Math.abs(this.row-row)==2 || Math.abs(this.col-col)==2) jump=true; 
+		else jump=false;
+		
+		setRow(row);
+		setCol(col);
+		for(Point p : dest) if(p.x==row && p.y==col) isInDest=true;
+	
 	}
 	
 /*	public boolean isNeighbour(int row, int col){
@@ -117,6 +138,10 @@ public class Piece {
 		else if (col==this.col+2 && row==this.row && board.isOccupied(row, this.col+1)) return true; // z prawej prawego
 	*/
 		return false;
+	}
+	
+	public boolean isJumpMade(){
+		return jump;
 	}
 	
 	@Override
