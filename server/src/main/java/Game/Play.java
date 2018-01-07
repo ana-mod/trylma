@@ -6,6 +6,7 @@ public class Play {
 
 	private int numberOfPlayers;
 	public ArrayList<Player> players = new ArrayList<Player>(); 
+	private Board board;
 	
 	public void addPlayer(Player player) {
 	
@@ -30,4 +31,12 @@ public class Play {
 		this.numberOfPlayers = numberOfPlayers;
 	}
 	
+	public void createBoard(){
+		board = new Board(players);
+		board.createPieces();
+	}
+	
+	public Board getBoard(){
+		return board;
+	}
 }

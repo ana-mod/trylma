@@ -8,34 +8,28 @@ public class Board {
 	private int rownum = 4*size+1;
 	private int colnum = 3*size+1;
 	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
-//	public int piecesPerPlayer = 10; // 4+3+2+1
-	
 	private boolean[][] board = new boolean[rownum][colnum];
 	private ArrayList<Piece> pieces = new ArrayList<Piece>();
-	
-	Play play;
+	private ArrayList<Player> players;
 	private int numberOfPlayers; 
-
-	public Board(int number) {
+	private ArrayList<Piece> piecesPerPlayer = new ArrayList<Piece>();
+	
+	public int getRownum(){
+		return rownum;
+	}
+	
+	public int getColnum(){
+		return colnum;
+	}
+	
+	public Board(ArrayList<Player> players) {
+		this.players = players;
 		initBoard();
 		initHome();
-		numberOfPlayers = number;
-		//createPieces(number);
+		numberOfPlayers = players.size();
+		
 	}
-	/*
-    private static volatile Board instance;
 
-    public static Board getInstance() {
-        if (instance == null) {
-            synchronized (Board.class) {
-                if (instance == null) {
-                    instance = new Board(numberOfPlayers);
-                }
-            }
-        }
-        return instance;
-    }*/
-	
 		public void initBoard(){
 
 			for (int i=size; i<rownum-size; i++)
@@ -153,53 +147,37 @@ public class Board {
 		
 		switch(numberOfPlayers)
 		{
-		/*case 1:
-			for(Point p: home.get(0)) createPiece(play.players.get(0), p.x, p.y);
-			break;
-		*/
+
 			case 2:
-				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
-				for(Point p : home.get(5)) createPiece(play.players.get(1), p.x, p.y);
+				for(Point p : home.get(0)) createPiece(players.get(0), p.x, p.y, home.get(5));
+				for(Point p : home.get(5)) createPiece(players.get(1), p.x, p.y, home.get(0));
 				break;
 				
 			case 3:
-				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
-				for(Point p : home.get(3)) createPiece(play.players.get(1), p.x, p.y);
-				for(Point p : home.get(4)) createPiece(play.players.get(2), p.x, p.y);
+				for(Point p : home.get(0)) createPiece(players.get(0), p.x, p.y, home.get(5));
+				for(Point p : home.get(3)) createPiece(players.get(1), p.x, p.y, home.get(2));
+				for(Point p : home.get(4)) createPiece(players.get(2), p.x, p.y, home.get(1));
 				break;
 				
 			case 4:
-				for(Point p : home.get(0)) createPiece(play.players.get(0), p.x, p.y);
-				for(Point p : home.get(5)) createPiece(play.players.get(1), p.x, p.y);
-				for(Point p : home.get(1)) createPiece(play.players.get(2), p.x, p.y);
-				for(Point p : home.get(4)) createPiece(play.players.get(4), p.x, p.y);
+				for(Point p : home.get(0)) createPiece(players.get(0), p.x, p.y, home.get(5));
+				for(Point p : home.get(5)) createPiece(players.get(1), p.x, p.y, home.get(0));
+				for(Point p : home.get(1)) createPiece(players.get(2), p.x, p.y, home.get(4));
+				for(Point p : home.get(4)) createPiece(players.get(3), p.x, p.y, home.get(1));
 				break;
 				
 			case 6:
 				for (int i=0; i<6; i++)
 				{
-					for(Point p : home.get(i)) createPiece(play.players.get(i), p.x, p.y);
+					for(Point p : home.get(i)) createPiece(players.get(i), p.x, p.y, home.get(5-i));
 				}
 				break;
 		}
 		
-	/*	createPiece(null, 0, 6);
-		createPiece(null, 0, 7);
-		createPiece(null, 1, 5);
-		createPiece(null, 0, 5);
-		createPiece(null, 2, 2);
-		createPiece(null, 1, 1);
-		createPiece(null, 1, 2);
-		createPiece(null, 2, 1);
-		createPiece(null, 2, 3);
-		createPiece(null, 3, 1);
-		createPiece(null, -1, 6);
-		//createPiece(null, 3, 2);
-		createPiece(null, 2, 4); // pieces created just for testing 
-	*/}
+	}
 
-	public void createPiece(Player player2, int row, int col){
-		Piece piece = new Piece(player2, row, col); 
+	public void createPiece(Player player, int row, int col, ArrayList<Point> dest){
+		Piece piece = new Piece(player, row, col, dest); 
 		piece.setBoard(this);
 		pieces.add(piece);
 	}
@@ -232,13 +210,44 @@ public class Board {
 		return board;
 	}
 
-	public void setBoard(boolean[][] board) {
+/*	public void setBoard(boolean[][] board) {
 		this.board = board;
 	}
 	
-	public void setPlay(Play play)
-	{
-		this.play = play;
+	
+*/
+	public ArrayList<Piece> getPiecesPerPlayer(Player player) {
+		
+		if(piecesPerPlayer.size()==10) return piecesPerPlayer;
+		
+		for (Piece piece : pieces)
+		{
+			if(piece.getOwner()==player) piecesPerPlayer.add(piece);
+		}
+		return piecesPerPlayer;
+		
+	}
+	
+	public boolean end(Player player) { //needs mastering probably
+
+		this.getPiecesPerPlayer(player);
+		
+		for (Piece piece : piecesPerPlayer)
+		{
+			if(!piece.isInDest()) return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean end () {
+		
+		for (Player player : players)
+		{
+			if(!end(player)) return false;
+		}
+		
+		return true;
 	}
 	
 	class Point
@@ -251,5 +260,7 @@ public class Board {
 			this.y=y;
 		}
 	}
+	
+	
 	
 }
