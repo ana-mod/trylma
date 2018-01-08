@@ -51,28 +51,22 @@ public class MainWindow extends Application
         }
 
         window = primaryStage;
-
         mainLayout = new BorderPane();
 
-        prepareMenuBar();
-        mainLayout.setTop(menuBar);
-        BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
-
-        prepareEntryLayout();
-        mainLayout.setCenter(entryLayout);
+        setMenuBar();
+        setEntryLayout();
 
         Scene scene = new Scene(mainLayout,300,200);
         scene.getStylesheets().add("SceneStyle.css");
-
         window.setScene(scene);
-
         window.show();
     }
 
-    private void prepareMenuBar()
+    private void setMenuBar ()
     {
         menuBar = new MenuBar();
         Menu options, gameRules, info;
+
 
         options = new Menu("Opcje");
         MenuItem display = new MenuItem("Wyświetlanie");
@@ -91,9 +85,11 @@ public class MainWindow extends Application
 
 
         menuBar.getMenus().addAll(options, gameRules, info);
+        mainLayout.setTop(menuBar);
+        BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
     }
 
-    private void prepareEntryLayout()
+    private void setEntryLayout ()
     {
         entryLayout = new VBox(10);
         entryLayout.setPadding(new Insets(10));
@@ -110,8 +106,7 @@ public class MainWindow extends Application
                 boolean isFree = clientConnection.setNickname(userInput.getText());
                 if(isFree)
                 {
-                    prepareLobbyLayout();
-                    mainLayout.setCenter(lobbyLayout);
+                    setLobbyLayout();
                 }
                 else
                 {
@@ -120,11 +115,7 @@ public class MainWindow extends Application
                         entryLayout.getChildren().add(errorLabel);
                 }
             }
-            catch (IOException er)
-            {
-                ServerErrorWindow.displayWindow();
-            }
-            catch (ClassNotFoundException er)
+            catch (IOException | ClassNotFoundException ex)
             {
                 ServerErrorWindow.displayWindow();
             }
@@ -132,10 +123,10 @@ public class MainWindow extends Application
         userInput.setMaxWidth(200);
 
         entryLayout.getChildren().addAll(nicknameLabel, userInput);
-
+        mainLayout.setCenter(entryLayout);
     }
 
-    private void prepareLobbyLayout() throws ClassNotFoundException, IOException, IOException
+    private void setLobbyLayout () throws ClassNotFoundException, IOException, IOException
     {
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
@@ -178,6 +169,7 @@ public class MainWindow extends Application
 
         lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
 
+        mainLayout.setCenter(lobbyLayout);
     }
 
     private Group boardPrint(Board board)
