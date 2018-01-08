@@ -7,7 +7,6 @@ import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,10 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-
-import Game.Board;
 import Connection.ClientConnection;
 
 import java.io.IOException;
