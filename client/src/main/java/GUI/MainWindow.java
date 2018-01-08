@@ -1,10 +1,10 @@
 package GUI;
 
 import Connection.SingleGameInfo;
-import GUI.OtherWindows.GameRulesWindow;
-import GUI.OtherWindows.InfoWindow;
-import GUI.OtherWindows.NewGameWindow;
-import GUI.OtherWindows.ServerErrorWindow;
+import GUI.PopUpWindows.GameRulesWindow;
+import GUI.PopUpWindows.InfoWindow;
+import GUI.PopUpWindows.CreateNewGameWindow;
+import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -162,7 +162,7 @@ public class MainWindow extends Application
         Button newGameButton = new Button("Nowa Gra");
         newGameButton.setOnAction(e -> {
             try{
-                clientConnection.createNewGame(NewGameWindow.displayWindow());
+                clientConnection.createNewGame(CreateNewGameWindow.displayWindow());
                 tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
             }catch (IOException | ClassNotFoundException ex)
             {

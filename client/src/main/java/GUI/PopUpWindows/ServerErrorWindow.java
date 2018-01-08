@@ -1,4 +1,4 @@
-package GUI.OtherWindows;
+package GUI.PopUpWindows;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

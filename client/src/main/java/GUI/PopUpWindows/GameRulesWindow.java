@@ -1,4 +1,4 @@
-package GUI.OtherWindows;
+package GUI.PopUpWindows;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 
 public class GameRulesWindow
 {
-
     private static GameRulesWindow instance;
 
     private Stage window;
@@ -43,13 +42,7 @@ public class GameRulesWindow
         }
         else
         {
-            synchronized (GameRulesWindow.class)
-            {
-                if (instance == null)
-                {
-                    instance = new GameRulesWindow();
-                }
-            }
+            instance = new GameRulesWindow();
             instance.display();
         }
     }

@@ -1,4 +1,4 @@
-package GUI.OtherWindows;
+package GUI.PopUpWindows;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -42,13 +42,7 @@ public class InfoWindow
         }
         else
         {
-            synchronized (InfoWindow.class)
-            {
-                if (instance == null)
-                {
-                    instance = new InfoWindow();
-                }
-            }
+            instance = new InfoWindow();
             instance.display();
         }
     }

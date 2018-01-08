@@ -1,4 +1,4 @@
-package GUI.OtherWindows;
+package GUI.PopUpWindows;
 
 import Connection.SingleGameInfo;
 import javafx.geometry.Insets;
@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class NewGameWindow
+public class CreateNewGameWindow
 {
     private Stage window;
     private VBox layout;
@@ -20,9 +20,9 @@ public class NewGameWindow
     private TextField nameInput;
     private ChoiceBox<Integer> choiceBox;
 
-    private static NewGameWindow instance;
+    private static CreateNewGameWindow instance;
 
-    private NewGameWindow()
+    private CreateNewGameWindow ()
     {
         window = new Stage();
         layout = new VBox(10);
@@ -64,13 +64,7 @@ public class NewGameWindow
         }
         else
         {
-            synchronized (InfoWindow.class)
-            {
-                if (instance == null)
-                {
-                    instance = new NewGameWindow();
-                }
-            }
+            instance = new CreateNewGameWindow();
             return instance.display();
         }
     }
