@@ -58,12 +58,6 @@ public class GameServer extends Thread
         }
     }
 
-    private void sendGamesInfo(ClientHandler clientHandler) throws IOException
-    {
-            for(Play p : games)
-                clientHandler.output.writeObject(new SingleGameInfo("haha",p.getNumberOfPlayers(), p.players.size()));
-            clientHandler.output.writeObject(new EndOfTransfer());
-    }
     public void addConnectionToSubServer(Socket connection)
     {
         clietConnections.add(new ClientHandler(connection));
@@ -71,7 +65,7 @@ public class GameServer extends Thread
 
     protected class ClientHandler extends Thread implements Player
     {
-        private Socket connection;
+        private Socket socket;
         private ObjectInputStream input;
         private ObjectOutputStream output;
 
@@ -81,13 +75,13 @@ public class GameServer extends Thread
             return nickname;
         }
 
-        public ClientHandler (Socket connection)
+        public ClientHandler (Socket socket)
         {
             try
             {
-                this.connection = connection;
-                this.output = new ObjectOutputStream(connection.getOutputStream());
-                this.input = new ObjectInputStream(connection.getInputStream());
+                this.socket = socket;
+                this.output = new ObjectOutputStream(socket.getOutputStream());
+                this.input = new ObjectInputStream(socket.getInputStream());
 
                 setNickname();
             }
@@ -159,11 +153,16 @@ public class GameServer extends Thread
 
         }
 
-
-
         public void move ()
         {
 
         }
+    }
+
+    private void sendGamesInfo(ClientHandler clientHandler) throws IOException
+    {
+        for(Play p : games)
+            clientHandler.output.writeObject(new SingleGameInfo("haha",p.getNumberOfPlayers(), p.players.size()));
+        clientHandler.output.writeObject(new EndOfTransfer());
     }
 }
