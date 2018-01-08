@@ -61,8 +61,8 @@ public class GameServer extends Thread
 
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {
-            //clientHandler.output.writeObject(new GameTableInfo(1,2));
-            //clientHandler.output.flush();
+            for(Play p : games)
+                clientHandler.output.writeObject(new GameTableInfo("haha",p.getNumberOfPlayers(), p.players.size()));
             clientHandler.output.writeObject(new EndOfTransfer());
     }
     public void addConnectionToSubServer(Socket connection)
@@ -77,6 +77,10 @@ public class GameServer extends Thread
         private ObjectOutputStream output;
 
         private String nickname;
+        public String getNickname ()
+        {
+            return nickname;
+        }
 
         public ClientHandler (Socket connection)
         {
@@ -88,11 +92,7 @@ public class GameServer extends Thread
 
                 setNickname();
             }
-            catch (IOException e)
-            {
-                System.out.println(e.getMessage());
-            }
-            catch (ClassNotFoundException e)
+            catch (IOException | ClassNotFoundException e)
             {
                 System.out.println(e.getMessage());
             }
@@ -125,11 +125,6 @@ public class GameServer extends Thread
             }
         }
 
-        public String getNickname ()
-        {
-            return nickname;
-        }
-
         public void run ()
         {
             Object msg;
@@ -143,22 +138,29 @@ public class GameServer extends Thread
                         clietConnections.remove(clietConnections.indexOf(this));
                         break;
                     }
-                    if(msg instanceof GetGamesInfo)
+                    else if(msg instanceof GetGamesInfo)
                     {
                         sendGamesInfo(this);
                     }
+                    else if(msg instanceof CreateNewGame)
+                    {
+                        msg=input.readObject();
+                        if(msg instanceof GameTableInfo)
+                        {
+                            games.add(new Play(((GameTableInfo) msg).getMaxPlayers()));
+                        }
+                    }
                 }
-                catch (IOException e)
+                catch (IOException | ClassNotFoundException e)
                 {
                     System.out.println(e.getMessage());
-                }
-                catch (ClassNotFoundException e)
-                {
-                    System.out.println(e.getMessage());
+                    break;
                 }
             }
 
         }
+
+
 
         public void move ()
         {

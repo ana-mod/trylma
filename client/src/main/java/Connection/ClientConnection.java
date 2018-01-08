@@ -30,8 +30,8 @@ public class ClientConnection extends Thread
     @Override
     public void run ()
     {
-        Read t1 = new Read();
-        t1.start();
+        Read readThread = new Read();
+        readThread.start();
     }
 
     public boolean setNickname(String nickname) throws ClassNotFoundException
@@ -75,6 +75,12 @@ public class ClientConnection extends Thread
         }
 
         return list;
+    }
+
+    public void createNewGame(GameTableInfo gameTableInfo) throws IOException
+    {
+        output.writeObject(new CreateNewGame(gameTableInfo));
+        output.writeObject(gameTableInfo);
     }
 
 

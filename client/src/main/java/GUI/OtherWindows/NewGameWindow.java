@@ -3,6 +3,7 @@ package GUI.OtherWindows;
 import Connection.GameTableInfo;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -40,6 +41,9 @@ public class NewGameWindow
 
         HBox h2 = new HBox(10);
         h2.getChildren().addAll(maxPlayersLabel, choiceBox);
+
+        Button create = new Button("Create");
+        create.setOnAction(e -> window.close());
 
         layout.getChildren().addAll(h1,h2);
         scene= new Scene(layout,400,300);

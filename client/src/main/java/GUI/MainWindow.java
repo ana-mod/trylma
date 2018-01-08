@@ -3,6 +3,7 @@ package GUI;
 import Connection.GameTableInfo;
 import GUI.OtherWindows.GameRulesWindow;
 import GUI.OtherWindows.InfoWindow;
+import GUI.OtherWindows.NewGameWindow;
 import GUI.OtherWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -85,9 +86,11 @@ public class MainWindow extends Application
         gameRules = new Menu("", gameRulesWorkaround);
         gameRulesWorkaround.setOnMouseClicked(e -> GameRulesWindow.displayWindow());
 
+
         Label infoWorkaround = new Label("Info");
         info = new Menu("", infoWorkaround);
         infoWorkaround.setOnMouseClicked(e -> InfoWindow.displayWindow());
+
 
         menuBar.getMenus().addAll(options, gameRules, info);
     }
@@ -134,7 +137,7 @@ public class MainWindow extends Application
 
     }
 
-    private void prepareLobbyLayout() throws IOException, ClassNotFoundException
+    private void prepareLobbyLayout() throws ClassNotFoundException, IOException, IOException
     {
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
@@ -159,6 +162,16 @@ public class MainWindow extends Application
         tableInfoTableView.setMaxWidth(403);
 
         Button newGameButton = new Button("Nowa Gra");
+        newGameButton.setOnAction(e -> {
+            try{
+                clientConnection.createNewGame(NewGameWindow.displayWindow());
+                tableInfoTableView.setItems(clientConnection.getGamesInfo());
+            }catch (IOException | ClassNotFoundException ex)
+            {
+
+            }
+
+        });
 
         Button joinGameButton = new Button("Połącz");
 
