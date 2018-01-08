@@ -126,11 +126,35 @@ public class MainWindow extends Application
         mainLayout.setCenter(entryLayout);
     }
 
-    private void setLobbyLayout () throws ClassNotFoundException, IOException, IOException
+    private void setLobbyLayout () throws ClassNotFoundException, IOException
     {
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
 
+        TableView<SingleGameInfo> tableInfoTableView = prepareTableForSingleGameInfo();
+
+        Button newGameButton = new Button("Nowa Gra");
+        newGameButton.setOnAction(e -> {
+            try{
+                clientConnection.createNewGame(CreateNewGameWindow.displayWindow());
+                tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
+            }catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+
+        });
+
+        Button joinGameButton = new Button("Połącz");
+
+        HBox hBox = new HBox(10);
+        hBox.getChildren().addAll(newGameButton,joinGameButton);
+        lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
+        mainLayout.setCenter(lobbyLayout);
+    }
+
+    private TableView<SingleGameInfo> prepareTableForSingleGameInfo() throws ClassNotFoundException, IOException
+    {
         TableView<SingleGameInfo> tableInfoTableView = new TableView<>();
 
         TableColumn<SingleGameInfo, String> nameColumn = new TableColumn<>("Name");
@@ -150,47 +174,6 @@ public class MainWindow extends Application
         tableInfoTableView.setMaxHeight(600);
         tableInfoTableView.setMaxWidth(403);
 
-        Button newGameButton = new Button("Nowa Gra");
-        newGameButton.setOnAction(e -> {
-            try{
-                clientConnection.createNewGame(CreateNewGameWindow.displayWindow());
-                tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
-            }catch (IOException | ClassNotFoundException ex)
-            {
-
-            }
-
-        });
-
-        Button joinGameButton = new Button("Połącz");
-
-        HBox hBox = new HBox(10);
-        hBox.getChildren().addAll(newGameButton,joinGameButton);
-
-        lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
-
-        mainLayout.setCenter(lobbyLayout);
+        return tableInfoTableView;
     }
-
-    private Group boardPrint(Board board)
-    {
-        Group group = new Group();
-
-        for(int i=0; i<board.getRownum(); i++)
-            for(int j=0; j<board.getColnum(); j++)
-
-                if(board.getBoard()[i][j])
-                {
-                    Circle circle = new Circle(20);
-                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
-                    circle.setLayoutY((i+1) * 50);
-                    circle.setFill(Color.WHITE);
-                    circle.setStroke(Color.BLACK);
-                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
-                    group.getChildren().add(circle);
-                }
-
-        return group;
-    }
-
 }
