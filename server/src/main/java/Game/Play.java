@@ -7,7 +7,25 @@ public class Play {
 	private int numberOfPlayers;
 	public ArrayList<Player> players = new ArrayList<Player>(); 
 	private Board board;
-	
+
+	private boolean isStarted = false;
+	private String title;
+
+	public boolean isStarted ()
+	{
+		return isStarted;
+	}
+
+	public String getTitle ()
+	{
+		return title;
+	}
+
+	public void setTitle (String title)
+	{
+		this.title = title;
+	}
+
 	public void addPlayer(Player player) {
 	
 		players.add(player);

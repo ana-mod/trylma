@@ -140,7 +140,11 @@ public class GameServer extends Thread
                         msg=input.readObject();
                         if(msg instanceof SingleGameInfo)
                         {
-                            games.add(new Play(((SingleGameInfo) msg).getMaxPlayers()));
+                            Play p = new Play(((SingleGameInfo) msg).getMaxPlayers());
+                            p.setTitle(((SingleGameInfo) msg).getTitle());
+                            p.addPlayer(this);
+                            games.add(p);
+
                         }
                     }
                 }
@@ -162,7 +166,7 @@ public class GameServer extends Thread
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {
         for(Play p : games)
-            clientHandler.output.writeObject(new SingleGameInfo("haha",p.getNumberOfPlayers(), p.players.size()));
+            clientHandler.output.writeObject(new SingleGameInfo(p.getTitle(),p.getNumberOfPlayers(), p.players.size()));
         clientHandler.output.writeObject(new EndOfTransfer());
     }
 }
