@@ -5,8 +5,14 @@ import java.io.Serializable;
 public class GameTableInfo implements Serializable
 {
     private String title;
-    private int maxPlayers;
-    private int currentPlayers;
+    private int maxPlayers, currentPlayers;
+
+    public GameTableInfo (String title, int maxPlayers, int currentPlayers)
+    {
+        this.title = title;
+        this.maxPlayers = maxPlayers;
+        this.currentPlayers = currentPlayers;
+    }
 
     public String getTitle ()
     {
@@ -37,13 +43,5 @@ public class GameTableInfo implements Serializable
     {
         this.currentPlayers = currentPlayers;
     }
-
-    public GameTableInfo (int currentPlayers, int maxPlayers)
-    {
-        title = "Gra";
-        this.maxPlayers = maxPlayers;
-        this.currentPlayers = currentPlayers;
-    }
-
 
 }
