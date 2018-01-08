@@ -6,8 +6,6 @@ import GUI.OtherWindows.InfoWindow;
 import GUI.OtherWindows.NewGameWindow;
 import GUI.OtherWindows.ServerErrorWindow;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -156,7 +154,7 @@ public class MainWindow extends Application
         maxColumn.setMinWidth(100);
         maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPlayers"));
 
-        tableInfoTableView.setItems(clientConnection.getGamesInfo());
+        tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
         tableInfoTableView.getColumns().addAll(nameColumn, playersColumn, maxColumn);
         tableInfoTableView.setMaxHeight(600);
         tableInfoTableView.setMaxWidth(403);
@@ -165,7 +163,7 @@ public class MainWindow extends Application
         newGameButton.setOnAction(e -> {
             try{
                 clientConnection.createNewGame(NewGameWindow.displayWindow());
-                tableInfoTableView.setItems(clientConnection.getGamesInfo());
+                tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
             }catch (IOException | ClassNotFoundException ex)
             {
 

@@ -2,8 +2,6 @@ package Connection;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -11,20 +9,15 @@ public class ClientConnection extends Thread
 {
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private Socket connection;
+    private Socket socket;
 
     private String nickname;
 
-    private JFrame frame;
-    private JTextArea frame_out;
-    private JTextField frame_in;
-
-
     public ClientConnection (int port) throws IOException
     {
-        this.connection = new Socket("localhost", port);
-        this.output = new ObjectOutputStream(connection.getOutputStream());
-        this.input = new ObjectInputStream(connection.getInputStream());
+        this.socket = new Socket("localhost", port);
+        this.output = new ObjectOutputStream(socket.getOutputStream());
+        this.input = new ObjectInputStream(socket.getInputStream());
     }
 
     @Override
@@ -36,41 +29,40 @@ public class ClientConnection extends Thread
 
     public boolean setNickname(String nickname) throws ClassNotFoundException
     {
-            try
-            {
-                output.writeObject(nickname);
-                Object msg = input.readObject();
+        try
+        {
+            output.writeObject(nickname);
+            Object msg = input.readObject();
 
-                if(msg instanceof NickTaken)
-                {
-                    return false;
-                }
-                else
-                {
-                    this.nickname = nickname;
-                    return true;
-                }
-            }
-            catch (IOException e)
+            if(msg instanceof NickAlreadyTaken)
             {
-                System.out.println(e.getMessage());
                 return false;
             }
+            else
+            {
+                this.nickname = nickname;
+                return true;
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
-    public ObservableList<GameTableInfo> getGamesInfo() throws IOException, ClassNotFoundException
+    public ObservableList<GameTableInfo> getAllGamesInfo () throws IOException, ClassNotFoundException
     {
-        output.writeObject(new GetGamesInfo());
+        output.writeObject(new GetAllGamesInfo());
         output.flush();
         ObservableList<GameTableInfo> list = FXCollections.observableArrayList();
 
-        Object recived = input.readObject();
-        while (recived instanceof GameTableInfo)
+        Object feedback = input.readObject();
+        while (feedback instanceof GameTableInfo)
         {
-            list.add((GameTableInfo) recived);
-            recived = null;
-            recived = input.readObject();
-            if(recived instanceof EndOfTransfer)
+            list.add((GameTableInfo) feedback);
+            feedback = input.readObject();
+            if(feedback instanceof EndOfTransfer)
                 break;
         }
 
@@ -90,20 +82,7 @@ public class ClientConnection extends Thread
         @Override
         public void run ()
         {
-            StringBuilder sb = new StringBuilder();
-            while (!isInterrupted())
-            {
-                try
-                {
-                    sb.append(input.readLine());
-                    sb.append('\n');
-                    frame_out.setText(sb.toString());
-                }
-                catch (IOException e)
-                {
-                    System.out.println(e.getMessage());
-                }
-            }
+
         }
     }
 }
