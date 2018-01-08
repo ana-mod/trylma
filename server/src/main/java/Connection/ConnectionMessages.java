@@ -6,3 +6,16 @@ class NickTaken implements Serializable {}
 class Success implements Serializable {}
 class GetGamesInfo implements Serializable {}
 class EndOfTransfer implements Serializable {}
+
+class CreateNewGame implements Serializable
+{
+    private GameTableInfo gameTableInfo;
+    public CreateNewGame (GameTableInfo gameTableInfo)
+    {
+        this.gameTableInfo = gameTableInfo;
+    }
+    public GameTableInfo getGameTableInfo ()
+    {
+        return gameTableInfo;
+    }
+}
