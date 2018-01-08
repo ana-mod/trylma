@@ -2,12 +2,12 @@ package Connection;
 
 import java.io.Serializable;
 
-public class GameTableInfo implements Serializable
+public class SingleGameInfo implements Serializable
 {
     private String title;
     private int maxPlayers, currentPlayers;
 
-    public GameTableInfo (String title, int maxPlayers, int currentPlayers)
+    public SingleGameInfo (String title, int maxPlayers, int currentPlayers)
     {
         this.title = title;
         this.maxPlayers = maxPlayers;

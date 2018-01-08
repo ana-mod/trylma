@@ -1,6 +1,6 @@
 package GUI;
 
-import Connection.GameTableInfo;
+import Connection.SingleGameInfo;
 import GUI.OtherWindows.GameRulesWindow;
 import GUI.OtherWindows.InfoWindow;
 import GUI.OtherWindows.NewGameWindow;
@@ -140,17 +140,17 @@ public class MainWindow extends Application
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
 
-        TableView<GameTableInfo> tableInfoTableView = new TableView<>();
+        TableView<SingleGameInfo> tableInfoTableView = new TableView<>();
 
-        TableColumn<GameTableInfo, String> nameColumn = new TableColumn<>("Name");
+        TableColumn<SingleGameInfo, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setMinWidth(200);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<GameTableInfo, Integer> playersColumn = new TableColumn<>("Players");
+        TableColumn<SingleGameInfo, Integer> playersColumn = new TableColumn<>("Players");
         playersColumn.setMinWidth(100);
         playersColumn.setCellValueFactory(new PropertyValueFactory<>("currentPlayers"));
 
-        TableColumn<GameTableInfo, Integer> maxColumn = new TableColumn<>("Max");
+        TableColumn<SingleGameInfo, Integer> maxColumn = new TableColumn<>("Max");
         maxColumn.setMinWidth(100);
         maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPlayers"));
 

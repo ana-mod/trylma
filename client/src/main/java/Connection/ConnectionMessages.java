@@ -9,13 +9,13 @@ class EndOfTransfer implements Serializable {}
 
 class CreateNewGame implements Serializable
 {
-    private GameTableInfo gameTableInfo;
-    public CreateNewGame (GameTableInfo gameTableInfo)
+    private SingleGameInfo singleGameInfo;
+    public CreateNewGame (SingleGameInfo singleGameInfo)
     {
-        this.gameTableInfo = gameTableInfo;
+        this.singleGameInfo = singleGameInfo;
     }
-    public GameTableInfo getGameTableInfo ()
+    public SingleGameInfo getSingleGameInfo ()
     {
-        return gameTableInfo;
+        return singleGameInfo;
     }
 }

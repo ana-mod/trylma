@@ -1,6 +1,6 @@
 package GUI.OtherWindows;
 
-import Connection.GameTableInfo;
+import Connection.SingleGameInfo;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -50,13 +50,13 @@ public class NewGameWindow
         window.setScene(scene);
     }
 
-    private GameTableInfo display()
+    private SingleGameInfo display()
     {
         window.showAndWait();
-        return new GameTableInfo(nameInput.getText(),choiceBox.getValue(),0);
+        return new SingleGameInfo(nameInput.getText(),choiceBox.getValue(),0);
     }
 
-    public static GameTableInfo displayWindow()
+    public static SingleGameInfo displayWindow()
     {
         if (instance != null)
         {

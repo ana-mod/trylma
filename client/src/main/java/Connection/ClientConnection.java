@@ -51,16 +51,16 @@ public class ClientConnection extends Thread
         }
     }
 
-    public ObservableList<GameTableInfo> getAllGamesInfo () throws IOException, ClassNotFoundException
+    public ObservableList<SingleGameInfo> getAllGamesInfo () throws IOException, ClassNotFoundException
     {
         output.writeObject(new GetAllGamesInfo());
         output.flush();
-        ObservableList<GameTableInfo> list = FXCollections.observableArrayList();
+        ObservableList<SingleGameInfo> list = FXCollections.observableArrayList();
 
         Object feedback = input.readObject();
-        while (feedback instanceof GameTableInfo)
+        while (feedback instanceof SingleGameInfo)
         {
-            list.add((GameTableInfo) feedback);
+            list.add((SingleGameInfo) feedback);
             feedback = input.readObject();
             if(feedback instanceof EndOfTransfer)
                 break;
@@ -69,10 +69,10 @@ public class ClientConnection extends Thread
         return list;
     }
 
-    public void createNewGame(GameTableInfo gameTableInfo) throws IOException
+    public void createNewGame(SingleGameInfo singleGameInfo) throws IOException
     {
-        output.writeObject(new CreateNewGame(gameTableInfo));
-        output.writeObject(gameTableInfo);
+        output.writeObject(new CreateNewGame(singleGameInfo));
+        output.writeObject(singleGameInfo);
     }
 
 

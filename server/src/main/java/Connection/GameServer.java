@@ -2,7 +2,6 @@ package Connection;
 
 import Game.Play;
 import Game.Player;
-import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -62,7 +61,7 @@ public class GameServer extends Thread
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {
             for(Play p : games)
-                clientHandler.output.writeObject(new GameTableInfo("haha",p.getNumberOfPlayers(), p.players.size()));
+                clientHandler.output.writeObject(new SingleGameInfo("haha",p.getNumberOfPlayers(), p.players.size()));
             clientHandler.output.writeObject(new EndOfTransfer());
     }
     public void addConnectionToSubServer(Socket connection)
@@ -112,14 +111,14 @@ public class GameServer extends Thread
                 {
                     if (msg.equals(ch.getNickname()) && !ch.equals(this))
                     {
-                        output.writeObject(new NickTaken());
+                        output.writeObject(new NickAlreadyTaken());
                         free = false;
                     }
                 }
 
                 if(free)
                 {
-                    output.writeObject(new Success());
+                    output.writeObject(new TaskCompleted());
                     this.nickname = msg;
                 }
             }
@@ -138,16 +137,16 @@ public class GameServer extends Thread
                         clietConnections.remove(clietConnections.indexOf(this));
                         break;
                     }
-                    else if(msg instanceof GetGamesInfo)
+                    else if(msg instanceof GetAllGamesInfo)
                     {
                         sendGamesInfo(this);
                     }
                     else if(msg instanceof CreateNewGame)
                     {
                         msg=input.readObject();
-                        if(msg instanceof GameTableInfo)
+                        if(msg instanceof SingleGameInfo)
                         {
-                            games.add(new Play(((GameTableInfo) msg).getMaxPlayers()));
+                            games.add(new Play(((SingleGameInfo) msg).getMaxPlayers()));
                         }
                     }
                 }

@@ -2,20 +2,20 @@ package Connection;
 
 import java.io.Serializable;
 
-class NickTaken implements Serializable {}
-class Success implements Serializable {}
-class GetGamesInfo implements Serializable {}
+class NickAlreadyTaken implements Serializable {}
+class TaskCompleted implements Serializable {}
+class GetAllGamesInfo implements Serializable {}
 class EndOfTransfer implements Serializable {}
 
 class CreateNewGame implements Serializable
 {
-    private GameTableInfo gameTableInfo;
-    public CreateNewGame (GameTableInfo gameTableInfo)
+    private SingleGameInfo singleGameInfo;
+    public CreateNewGame (SingleGameInfo singleGameInfo)
     {
-        this.gameTableInfo = gameTableInfo;
+        this.singleGameInfo = singleGameInfo;
     }
-    public GameTableInfo getGameTableInfo ()
+    public SingleGameInfo getSingleGameInfo ()
     {
-        return gameTableInfo;
+        return singleGameInfo;
     }
 }
