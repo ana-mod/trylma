@@ -46,8 +46,9 @@ public class Piece {
 	}
 	
 	public Piece getInstance(int row, int col){
-		if(this.row==row & this.col==col) return this;
-		return null;
+		//if(this.row==row & this.col==col) 
+			return this;
+		//return null;
 	}
 	
 	

@@ -7,12 +7,11 @@ public class Play {
 	private int numberOfPlayers;
 	public ArrayList<Player> players = new ArrayList<Player>(); 
 	private Board board;
-	public ArrayList<ArrayList<Piece>> piecesPerPlayer = new ArrayList<ArrayList<Piece>>();
 	
 	public void addPlayer(Player player) {
 	
 		players.add(player);
-		
+	
 	}
 	
 	public void start(){
@@ -36,15 +35,6 @@ public class Play {
 		board = new Board(players);
 		board.createPieces();
 		board.addPiecesPerPlayer();
-		/*for(Player player : players)
-		{
-			int i=0;
-			for (Piece piece : board.getPieces())
-			{
-				if(piece.getOwner()==player) piecesPerPlayer.get(i).add(piece);
-			}
-			i++;
-		}*/
 		
 	}
 	

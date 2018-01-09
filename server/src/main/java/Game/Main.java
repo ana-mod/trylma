@@ -15,6 +15,7 @@ public class Main {
 		pl.addPlayer(player2);
 		//System.out.println(pl.players);
 		pl.createBoard();
+		//pl.getBoard().addPiecesPerPlayer();
 		for(int i=0;i<6;i++)
 		{
 			for(Point p : pl.getBoard().home.get(i))
@@ -29,6 +30,11 @@ public class Main {
 	System.out.println(pl.getBoard().getPiece(4, 8));
 	pl.getBoard().getPiece(4, 8).move(player, 4, 9);
 	System.out.println(pl.getBoard().getBoard()[0][6]);
+	
+	System.out.println(pl.getBoard().getPiecesPerPlayer(player2));
+	System.out.println(pl.getBoard().getPiecesPerPlayer(player));	
+	System.out.println(pl.getBoard().end(player2));
+	
 	}
 
 }

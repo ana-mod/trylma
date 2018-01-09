@@ -10,10 +10,10 @@ public class Board {
 	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
 	private boolean[][] board = new boolean[rownum][colnum];
 	private ArrayList<Piece> pieces = new ArrayList<Piece>();
-	public ArrayList<Player> players;
+	private ArrayList<Player> players;
 	private int numberOfPlayers; 
-	public ArrayList<ArrayList<Piece>> piecesPerPlayer = new ArrayList<ArrayList<Piece>>();
-	ArrayList<Piece> temp = new ArrayList<Piece>();
+	private ArrayList<ArrayList<Piece>> piecesPerPlayer = new ArrayList<ArrayList<Piece>>();
+	private ArrayList<Piece> temp = new ArrayList<Piece>();
 
 	public int getRownum(){
 		return rownum;
@@ -210,24 +210,7 @@ public class Board {
 		return board;
 	}
 
-/*	public void setBoard(boolean[][] board) {
-		this.board = board;
-	}
-	
-	
-*/
-/*	public ArrayList<Piece> getPiecesPerPlayer(Player player) {
-		
-		if(piecesPerPlayer.size()==10) return piecesPerPlayer;
-		
-		for (Piece piece : pieces)
-		{
-			if(piece.getOwner()==player) piecesPerPlayer.add(piece);
-		}
-		return piecesPerPlayer;
-		
-	}
-*/
+
 	public void addPiecesPerPlayer(){
 		
 		for(int i=0;i<players.size();i++)
@@ -249,7 +232,7 @@ public class Board {
 		return piecesPerPlayer.get(players.indexOf(player));
 	}
 	
-	public boolean end(Player player) { //needs mastering probably
+	public boolean end(Player player) { 
 
 		temp = this.getPiecesPerPlayer(player);
 		for (Piece piece : temp)		//or for(Piece piece : this.getPiecesPerPlayer(player) and then there's no need to create new ArrayList temp
