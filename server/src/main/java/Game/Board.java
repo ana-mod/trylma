@@ -10,10 +10,11 @@ public class Board {
 	public ArrayList<ArrayList<Point>> home = new ArrayList<ArrayList<Point>>(6);
 	private boolean[][] board = new boolean[rownum][colnum];
 	private ArrayList<Piece> pieces = new ArrayList<Piece>();
-	private ArrayList<Player> players;
+	public ArrayList<Player> players;
 	private int numberOfPlayers; 
-	private ArrayList<Piece> piecesPerPlayer = new ArrayList<Piece>();
-	
+	public ArrayList<ArrayList<Piece>> piecesPerPlayer = new ArrayList<ArrayList<Piece>>();
+	ArrayList<Piece> temp = new ArrayList<Piece>();
+
 	public int getRownum(){
 		return rownum;
 	}
@@ -27,7 +28,6 @@ public class Board {
 		initBoard();
 		initHome();
 		numberOfPlayers = players.size();
-		
 	}
 
 		public void initBoard(){
@@ -216,7 +216,7 @@ public class Board {
 	
 	
 */
-	public ArrayList<Piece> getPiecesPerPlayer(Player player) {
+/*	public ArrayList<Piece> getPiecesPerPlayer(Player player) {
 		
 		if(piecesPerPlayer.size()==10) return piecesPerPlayer;
 		
@@ -227,12 +227,32 @@ public class Board {
 		return piecesPerPlayer;
 		
 	}
+*/
+	public void addPiecesPerPlayer(){
+		
+		for(int i=0;i<players.size();i++)
+			piecesPerPlayer.add(new ArrayList<Piece>());
+		
+		for(int i=0; i<players.size(); i++)
+		{
+			for (Piece piece : pieces)
+			{
+				if(piece.getOwner().equals(players.get(i))) piecesPerPlayer.get(i).add(piece);
+			}
+			
+		}
+	}
+	
+	
+	public ArrayList<Piece> getPiecesPerPlayer(Player player){
+		
+		return piecesPerPlayer.get(players.indexOf(player));
+	}
 	
 	public boolean end(Player player) { //needs mastering probably
 
-		this.getPiecesPerPlayer(player);
-		
-		for (Piece piece : piecesPerPlayer)
+		temp = this.getPiecesPerPlayer(player);
+		for (Piece piece : temp)		//or for(Piece piece : this.getPiecesPerPlayer(player) and then there's no need to create new ArrayList temp
 		{
 			if(!piece.isInDest()) return false;
 		}
