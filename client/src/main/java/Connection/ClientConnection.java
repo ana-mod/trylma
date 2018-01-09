@@ -69,13 +69,37 @@ public class ClientConnection extends Thread
         return list;
     }
 
-    public void createNewGame(SingleGameInfo singleGameInfo) throws IOException
+    public boolean createNewGame(SingleGameInfo singleGameInfo) throws IOException, ClassNotFoundException
     {
         output.writeObject(new CreateNewGame(singleGameInfo));
         output.writeObject(singleGameInfo);
+        if(input.readObject() instanceof GameAlreadyExists)
+            return false;
+        else
+            return true;
     }
 
+    public void connectToGame(SingleGameInfo singleGameInfo) throws IOException, ClassNotFoundException
+    {
+        output.writeObject(new ConnectToGame(singleGameInfo));
+        if(!(input.readObject() instanceof TaskCompleted))
+            throw new IOException();
+    }
 
+    public Boolean[][] getBoard() throws IOException, ClassNotFoundException
+    {
+        output.writeObject(new GetBoard());
+        return (Boolean[][]) input.readObject();
+    }
+
+    protected class WaitForStart extends Thread
+    {
+        @Override
+        public void run ()
+        {
+            while (input.readObject() instanceof Wai)
+        }
+    }
 
     protected class Read extends Thread
     {

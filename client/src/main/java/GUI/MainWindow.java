@@ -7,6 +7,7 @@ import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -14,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import Connection.ClientConnection;
 
@@ -27,6 +29,8 @@ public class MainWindow extends Application
     private BorderPane mainLayout;
     private VBox entryLayout;
     private VBox lobbyLayout;
+    private BorderPane gameLayout;
+    private BorderPane waitLayout;
 
     private ClientConnection clientConnection;
 
@@ -132,8 +136,9 @@ public class MainWindow extends Application
         Button newGameButton = new Button("Nowa Gra");
         newGameButton.setOnAction(e -> {
             try{
-                clientConnection.createNewGame(CreateNewGameWindow.displayWindow());
-                tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
+                if(!clientConnection.createNewGame(CreateNewGameWindow.displayWindow()))
+                    System.out.println("gameAlreadyexists");
+                setGameLayout();
             }catch (IOException | ClassNotFoundException ex)
             {
                 ServerErrorWindow.displayWindow();
@@ -142,11 +147,32 @@ public class MainWindow extends Application
         });
 
         Button joinGameButton = new Button("Połącz");
+        joinGameButton.setOnAction(e -> {
+            try
+            {
+                clientConnection.connectToGame(tableInfoTableView.getSelectionModel().getSelectedItem());
+                //setGameLayout();
+            }
+            catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+        });
 
         HBox hBox = new HBox(10);
         hBox.getChildren().addAll(newGameButton,joinGameButton);
         lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
         mainLayout.setCenter(lobbyLayout);
+    }
+
+    private void setGameLayout() throws IOException, ClassNotFoundException
+    {
+        Boolean[][] board = clientConnection.getBoard();
+        gameLayout = new BorderPane();
+        gameLayout.setCenter(boardPrint(board));
+
+        mainLayout.setCenter(gameLayout);
+
     }
 
     private TableView<SingleGameInfo> prepareTableForSingleGameInfo() throws ClassNotFoundException, IOException
@@ -171,5 +197,26 @@ public class MainWindow extends Application
         tableInfoTableView.setMaxWidth(403);
 
         return tableInfoTableView;
+    }
+
+    private Group boardPrint(Boolean[][] board)
+    {
+        Group group = new Group();
+
+        for(int i=0; i<board.length; i++)
+            for(int j=0; j<board[i].length; j++)
+
+                if(board[i][j])
+                {
+                    Circle circle = new Circle(20);
+                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
+                    circle.setLayoutY((i+1) * 50);
+                    circle.setFill(Color.WHITE);
+                    circle.setStroke(Color.BLACK);
+                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
+                    group.getChildren().add(circle);
+                }
+
+        return group;
     }
 }
