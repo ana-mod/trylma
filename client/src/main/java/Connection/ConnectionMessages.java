@@ -31,3 +31,10 @@ class ConnectToGame implements Serializable
         return singleGameInfo;
     }
 }
+
+class WaitingForPlayers implements Serializable
+{
+    private int ready;
+    public WaitingForPlayers (int ready) { this.ready = ready; }
+    public int getReady() { return this.ready; }
+}

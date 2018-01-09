@@ -70,6 +70,8 @@ public class GameServer extends Thread
         private ObjectOutputStream output;
 
         private String nickname;
+        private Play game;
+
         public String getNickname ()
         {
             return nickname;
@@ -140,12 +142,25 @@ public class GameServer extends Thread
                         msg=input.readObject();
                         if(msg instanceof SingleGameInfo)
                         {
-                            Play p = new Play(((SingleGameInfo) msg).getMaxPlayers());
-                            p.setTitle(((SingleGameInfo) msg).getTitle());
-                            p.addPlayer(this);
-                            games.add(p);
-
+                            createNewGame(this,(SingleGameInfo) msg);
                         }
+                    }
+                    else if(msg instanceof ConnectToGame)
+                    {
+                        Play p = null;
+                        for(Play play : games)
+                        {
+                            if(play.getTitle().equals(((ConnectToGame) msg).getSingleGameInfo().getTitle()))
+                            {
+                                p=play;
+                                break;
+                            }
+                        }
+                        connectToGame(p);
+                    }
+                    else if(msg instanceof GetBoard)
+                    {
+                        sendBoard(this);
                     }
                 }
                 catch (IOException | ClassNotFoundException e)
@@ -161,6 +176,29 @@ public class GameServer extends Thread
         {
 
         }
+
+        private void connectToGame(Play play) throws IOException
+        {
+            this.game = play;
+            output.writeObject(new TaskCompleted());
+        }
+    }
+
+    private void createNewGame(ClientHandler clientHandler, SingleGameInfo singleGameInfo) throws IOException
+    {
+        for(Play p : games)
+            if(p.getTitle().equals(singleGameInfo.getTitle()))
+            {
+                clientHandler.output.writeObject(new GameAlreadyExists());
+                return;
+            }
+
+        Play p = new Play(singleGameInfo.getMaxPlayers());
+        p.setTitle(singleGameInfo.getTitle());
+        p.addPlayer(clientHandler);
+        clientHandler.game = p;
+        games.add(p);
+        clientHandler.output.writeObject(new TaskCompleted());
     }
 
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
@@ -168,5 +206,17 @@ public class GameServer extends Thread
         for(Play p : games)
             clientHandler.output.writeObject(new SingleGameInfo(p.getTitle(),p.getNumberOfPlayers(), p.players.size()));
         clientHandler.output.writeObject(new EndOfTransfer());
+    }
+
+    private void sendBoard(ClientHandler clientHandler) throws IOException
+    {
+        boolean[][] board = clientHandler.game.getBoard().getBoard();
+        Boolean[][] boardWrapper = new Boolean[board.length][board[0].length];
+
+        for (int i=0; i <board.length; i++)
+            for (int j=0; j<board[i].length; j++)
+                boardWrapper[i][j] = board[i][j];
+
+        clientHandler.output.writeObject(boardWrapper);
     }
 }

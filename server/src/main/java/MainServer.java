@@ -35,6 +35,8 @@ public class MainServer extends Application
         label.setFont(new Font(36));
         layout.setCenter(label);
 
+        window.setOnCloseRequest(e -> System.exit(0));
+
         Scene scene = new Scene(layout, 400,100);
         window.setScene(scene);
         window.show();

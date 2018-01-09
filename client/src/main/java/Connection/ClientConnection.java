@@ -1,5 +1,8 @@
 package Connection;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.io.*;
@@ -12,6 +15,18 @@ public class ClientConnection extends Thread
     private Socket socket;
 
     private String nickname;
+
+    public int getReadyPlayers ()
+    {
+        return readyPlayers.get();
+    }
+
+    public IntegerProperty readyPlayersProperty ()
+    {
+        return readyPlayers;
+    }
+
+    private IntegerProperty readyPlayers;
 
     public ClientConnection (int port) throws IOException
     {
@@ -92,12 +107,31 @@ public class ClientConnection extends Thread
         return (Boolean[][]) input.readObject();
     }
 
+    public void waitForPlayers()
+    {
+        WaitForStart waitForStart = new WaitForStart();
+        waitForStart.run();
+    }
+
     protected class WaitForStart extends Thread
     {
         @Override
         public void run ()
         {
-            while (input.readObject() instanceof Wai)
+            readyPlayers = new SimpleIntegerProperty();
+
+            try
+            {
+                Object msg = input.readObject();
+                while ( msg instanceof WaitingForPlayers)
+                {
+                    readyPlayers.set(((WaitingForPlayers) msg).getReady());
+                    msg = input.readObject();
+                }
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+            }
         }
     }
 

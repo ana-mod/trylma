@@ -165,6 +165,24 @@ public class MainWindow extends Application
         mainLayout.setCenter(lobbyLayout);
     }
 
+    private void setWaitLayout()
+    {
+        clientConnection.waitForPlayers();
+        Label label = new Label("Czekanie na innych graczy, gotowych: ");
+        Label numberLabel = new Label("1");
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(label,numberLabel);
+
+        clientConnection.readyPlayersProperty().addListener( (v, oldValue, newValue) -> {
+            numberLabel.setText(newValue.toString());
+        });
+
+        waitLayout = new BorderPane();
+        waitLayout.setCenter(hBox);
+
+        mainLayout.setCenter(waitLayout);
+    }
+
     private void setGameLayout() throws IOException, ClassNotFoundException
     {
         Boolean[][] board = clientConnection.getBoard();
