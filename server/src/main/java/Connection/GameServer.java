@@ -144,7 +144,7 @@ public class GameServer extends Thread
                         {
                             createNewGame(this,(SingleGameInfo) msg);
                         }
-                        waitForOtherPlayers();
+                        //waitForOtherPlayers();
                     }
                     else if(msg instanceof ConnectToGame)
                     {
@@ -158,7 +158,7 @@ public class GameServer extends Thread
                             }
                         }
                         connectToGame(p);
-                        waitForOtherPlayers();
+                        //waitForOtherPlayers();
                     }
                     else if(msg instanceof GetBoard)
                     {
@@ -166,7 +166,7 @@ public class GameServer extends Thread
 
                     }
                 }
-                catch (IOException | ClassNotFoundException | InterruptedException e)
+                catch (IOException | ClassNotFoundException e)
                 {
                     System.out.println(e.getMessage());
                     break;
@@ -208,8 +208,6 @@ public class GameServer extends Thread
 
         Play p = new Play(singleGameInfo.getMaxPlayers());
         p.setTitle(singleGameInfo.getTitle());
-        p.addPlayer(clientHandler);
-        clientHandler.game = p;
         games.add(p);
         clientHandler.output.writeObject(new TaskCompleted());
     }

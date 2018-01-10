@@ -144,8 +144,10 @@ public class MainWindow extends Application
         Button newGameButton = new Button("Nowa Gra");
         newGameButton.setOnAction(e -> {
             try{
-                if(!clientConnection.createNewGame(CreateNewGameWindow.displayWindow()))
+                SingleGameInfo gameInfo = CreateNewGameWindow.displayWindow();
+                if(!clientConnection.createNewGame(gameInfo))
                     System.out.println("gameAlreadyexists");
+                clientConnection.connectToGame(gameInfo);
                 setWaitLayout();
             }catch (IOException | ClassNotFoundException | InterruptedException ex)
             {
@@ -167,10 +169,26 @@ public class MainWindow extends Application
             }
         });
 
+        Button refreshButton = new Button("Odśwież");
+        refreshButton.setOnAction(e -> {
+            try
+            {
+                setLobbyLayout();
+            }
+            catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+
+        });
+
         HBox hBox = new HBox(10);
-        hBox.getChildren().addAll(newGameButton,joinGameButton);
+        hBox.getChildren().addAll(newGameButton,joinGameButton, refreshButton);
         lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
+        lobbyLayout.setMinSize(500,800);
         mainLayout.setCenter(lobbyLayout);
+        window.setWidth(433);
+        window.setHeight(600);
     }
 
     private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
@@ -215,6 +233,8 @@ public class MainWindow extends Application
         gameLayout.setCenter(boardPrint(board));
 
         mainLayout.setCenter(gameLayout);
+        window.setWidth(720);
+        window.setHeight(950);
 
     }
 
