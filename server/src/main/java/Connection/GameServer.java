@@ -144,6 +144,7 @@ public class GameServer extends Thread
                         {
                             createNewGame(this,(SingleGameInfo) msg);
                         }
+                        waitForOtherPlayers();
                     }
                     else if(msg instanceof ConnectToGame)
                     {
@@ -157,13 +158,15 @@ public class GameServer extends Thread
                             }
                         }
                         connectToGame(p);
+                        waitForOtherPlayers();
                     }
                     else if(msg instanceof GetBoard)
                     {
                         sendBoard(this);
+
                     }
                 }
-                catch (IOException | ClassNotFoundException e)
+                catch (IOException | ClassNotFoundException | InterruptedException e)
                 {
                     System.out.println(e.getMessage());
                     break;
@@ -180,7 +183,18 @@ public class GameServer extends Thread
         private void connectToGame(Play play) throws IOException
         {
             this.game = play;
+            game.addPlayer(this);
             output.writeObject(new TaskCompleted());
+        }
+
+        private void waitForOtherPlayers() throws IOException, InterruptedException
+        {
+            while(game.getNumberOfPlayers() != game.players.size())
+            {
+                WaitingForPlayers waitingForPlayers = new WaitingForPlayers(game.players.size());
+                output.writeObject(waitingForPlayers);
+                this.sleep(1000);
+                    }
         }
     }
 
@@ -200,6 +214,8 @@ public class GameServer extends Thread
         games.add(p);
         clientHandler.output.writeObject(new TaskCompleted());
     }
+
+
 
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {

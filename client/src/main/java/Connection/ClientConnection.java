@@ -1,12 +1,18 @@
 package Connection;
 
+import GUI.PopUpWindows.ServerErrorWindow;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 
 public class ClientConnection extends Thread
 {
@@ -16,17 +22,14 @@ public class ClientConnection extends Thread
 
     private String nickname;
 
-    public int getReadyPlayers ()
-    {
-        return readyPlayers.get();
-    }
 
-    public IntegerProperty readyPlayersProperty ()
+    public int getReadyPlayers ()
     {
         return readyPlayers;
     }
 
-    private IntegerProperty readyPlayers;
+    //private IntegerProperty readyPlayers = new SimpleIntegerProperty(1);
+    private int readyPlayers;
 
     public ClientConnection (int port) throws IOException
     {
@@ -88,7 +91,8 @@ public class ClientConnection extends Thread
     {
         output.writeObject(new CreateNewGame(singleGameInfo));
         output.writeObject(singleGameInfo);
-        if(input.readObject() instanceof GameAlreadyExists)
+        Object msg = input.readObject();
+        if(msg instanceof GameAlreadyExists)
             return false;
         else
             return true;
@@ -107,31 +111,23 @@ public class ClientConnection extends Thread
         return (Boolean[][]) input.readObject();
     }
 
-    public void waitForPlayers()
+    public boolean waitForPlayers()
     {
-        WaitForStart waitForStart = new WaitForStart();
-        waitForStart.run();
-    }
-
-    protected class WaitForStart extends Thread
-    {
-        @Override
-        public void run ()
+        try
         {
-            readyPlayers = new SimpleIntegerProperty();
-
-            try
+            Object msg = input.readObject();
+            if (msg instanceof WaitingForPlayers)
             {
-                Object msg = input.readObject();
-                while ( msg instanceof WaitingForPlayers)
-                {
-                    readyPlayers.set(((WaitingForPlayers) msg).getReady());
-                    msg = input.readObject();
-                }
+                //readyPlayers.set(((WaitingForPlayers) msg).getReady());
+                readyPlayers = ((WaitingForPlayers) msg).getReady();
+                return false;
             }
-            catch (IOException | ClassNotFoundException e)
-            {
-            }
+            return true;
+        }
+        catch (IOException | ClassNotFoundException ex)
+        {
+            ServerErrorWindow.displayWindow();
+            return false;
         }
     }
 

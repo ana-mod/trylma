@@ -6,6 +6,11 @@ import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -20,6 +25,7 @@ import javafx.stage.Stage;
 import Connection.ClientConnection;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 public class MainWindow extends Application
 {
@@ -138,8 +144,8 @@ public class MainWindow extends Application
             try{
                 if(!clientConnection.createNewGame(CreateNewGameWindow.displayWindow()))
                     System.out.println("gameAlreadyexists");
-                setGameLayout();
-            }catch (IOException | ClassNotFoundException ex)
+                setWaitLayout();
+            }catch (IOException | ClassNotFoundException | InterruptedException ex)
             {
                 ServerErrorWindow.displayWindow();
             }
@@ -151,9 +157,9 @@ public class MainWindow extends Application
             try
             {
                 clientConnection.connectToGame(tableInfoTableView.getSelectionModel().getSelectedItem());
-                //setGameLayout();
+                setWaitLayout();
             }
-            catch (IOException | ClassNotFoundException ex)
+            catch (IOException | ClassNotFoundException | InterruptedException ex)
             {
                 ServerErrorWindow.displayWindow();
             }
@@ -165,22 +171,41 @@ public class MainWindow extends Application
         mainLayout.setCenter(lobbyLayout);
     }
 
-    private void setWaitLayout()
+    private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
     {
-        clientConnection.waitForPlayers();
+
+
+
+
         Label label = new Label("Czekanie na innych graczy, gotowych: ");
-        Label numberLabel = new Label("1");
+        Label numberLabel = new Label(clientConnection.getReadyPlayers() + "");
         HBox hBox = new HBox();
         hBox.getChildren().addAll(label,numberLabel);
 
-        clientConnection.readyPlayersProperty().addListener( (v, oldValue, newValue) -> {
-            numberLabel.setText(newValue.toString());
-        });
+        //numberLabel.textProperty().bind(clientConnection.readyPlayersProperty().asString());
+/*
+        clientConnection.readyPlayersProperty().addListener((v, oldV, newV) -> {
+            numberLabel.setText(newV.toString());
+        });*/
 
         waitLayout = new BorderPane();
         waitLayout.setCenter(hBox);
 
         mainLayout.setCenter(waitLayout);
+/*
+        Task task = new Task<Void>() {
+            @Override public Void call() {
+
+
+                return null;
+            }
+        };
+        new Thread(task).start();*/
+
+        Platform.runLater(() -> {
+            while(!clientConnection.waitForPlayers())
+                numberLabel.setText(clientConnection.getReadyPlayers()+"");
+        });
     }
 
     private void setGameLayout() throws IOException, ClassNotFoundException
