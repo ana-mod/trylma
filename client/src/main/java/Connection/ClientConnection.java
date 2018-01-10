@@ -25,6 +25,11 @@ public class ClientConnection extends Thread
     private ObjectInputStream input;
     private Socket socket;
 
+    public String getNickname ()
+    {
+        return nickname;
+    }
+
     private String nickname;
 
 

@@ -59,6 +59,7 @@ public class MainWindow extends Application
         }
 
         window = primaryStage;
+        window.setTitle("ChineseCheckers");
         mainLayout = new BorderPane();
 
         setMenuBar();
@@ -136,6 +137,7 @@ public class MainWindow extends Application
 
     private void setLobbyLayout () throws ClassNotFoundException, IOException
     {
+        window.setTitle(window.getTitle() + "-" + clientConnection.getNickname());
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
 

@@ -37,6 +37,7 @@ public class MainServer extends Application
     public void start (Stage primaryStage) throws Exception
     {
         Stage window = primaryStage;
+        window.setTitle("Server-ChineseCheckers");
 
         BorderPane layout = new BorderPane();
         Label label = new Label("Server is now working");
