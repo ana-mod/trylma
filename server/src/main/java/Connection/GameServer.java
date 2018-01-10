@@ -189,12 +189,11 @@ public class GameServer extends Thread
 
         private void waitForOtherPlayers() throws IOException, InterruptedException
         {
-            while(game.getNumberOfPlayers() != game.players.size())
+            while(!game.isStarted())
             {
-                WaitingForPlayers waitingForPlayers = new WaitingForPlayers(game.players.size());
-                output.writeObject(waitingForPlayers);
+                output.writeBoolean(game.isStarted());
                 this.sleep(1000);
-                    }
+            }
         }
     }
 

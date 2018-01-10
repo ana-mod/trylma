@@ -29,11 +29,15 @@ public class Play {
 	public void addPlayer(Player player) {
 	
 		players.add(player);
-		
+		if(players.size() == numberOfPlayers)
+			start();
 	}
 	
 	public void start(){
 		if(numberOfPlayers!=players.size()) return;
+		isStarted=true;
+		createBoard();
+
 		
 	}
 	

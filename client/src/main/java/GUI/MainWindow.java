@@ -7,6 +7,8 @@ import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
@@ -173,20 +175,17 @@ public class MainWindow extends Application
 
     private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
     {
-
-
-
-
-        Label label = new Label("Czekanie na innych graczy, gotowych: ");
+        Label label = new Label("Czekanie na innych graczy");//, gotowych: ");
         Label numberLabel = new Label(clientConnection.getReadyPlayers() + "");
         HBox hBox = new HBox();
         hBox.getChildren().addAll(label,numberLabel);
+        BooleanProperty isRdy = new SimpleBooleanProperty(false);
 
         //numberLabel.textProperty().bind(clientConnection.readyPlayersProperty().asString());
-/*
-        clientConnection.readyPlayersProperty().addListener((v, oldV, newV) -> {
-            numberLabel.setText(newV.toString());
-        });*/
+
+        clientConnection.readyPlayersProperty().addListener( (v, oldV, newV) -> {
+            numberLabel.setText(newV + "");
+        });
 
         waitLayout = new BorderPane();
         waitLayout.setCenter(hBox);
@@ -196,16 +195,17 @@ public class MainWindow extends Application
         Task task = new Task<Void>() {
             @Override public Void call() {
 
-
                 return null;
             }
-        };
-        new Thread(task).start();*/
+        };*/
+            Thread.sleep(15000);
+            setGameLayout();
 
+/*
         Platform.runLater(() -> {
             while(!clientConnection.waitForPlayers())
                 numberLabel.setText(clientConnection.getReadyPlayers()+"");
-        });
+        });*/
     }
 
     private void setGameLayout() throws IOException, ClassNotFoundException

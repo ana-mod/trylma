@@ -16,6 +16,11 @@ import java.util.concurrent.CountDownLatch;
 
 public class ClientConnection extends Thread
 {
+    public ObjectOutputStream getOutput ()
+    {
+        return output;
+    }
+
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private Socket socket;
@@ -25,11 +30,16 @@ public class ClientConnection extends Thread
 
     public int getReadyPlayers ()
     {
+        return readyPlayers.getValue();
+    }
+
+    public IntegerProperty readyPlayersProperty ()
+    {
         return readyPlayers;
     }
 
-    //private IntegerProperty readyPlayers = new SimpleIntegerProperty(1);
-    private int readyPlayers;
+    private IntegerProperty readyPlayers = new SimpleIntegerProperty(1);
+    //private int readyPlayers;
 
     public ClientConnection (int port) throws IOException
     {
@@ -114,17 +124,20 @@ public class ClientConnection extends Thread
     public boolean waitForPlayers()
     {
         try
-        {
+        {/*
             Object msg = input.readObject();
+
             if (msg instanceof WaitingForPlayers)
             {
-                //readyPlayers.set(((WaitingForPlayers) msg).getReady());
-                readyPlayers = ((WaitingForPlayers) msg).getReady();
+                if(((WaitingForPlayers) msg).getReady() == readyPlayers.get())
+                    readyPlayers.set(((WaitingForPlayers) msg).getReady());
+                //readyPlayers = ((WaitingForPlayers) msg).getReady();
                 return false;
             }
-            return true;
+            return true;*/
+            return input.readBoolean();
         }
-        catch (IOException | ClassNotFoundException ex)
+        catch (IOException ex)//| ClassNotFoundException ex)
         {
             ServerErrorWindow.displayWindow();
             return false;
