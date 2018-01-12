@@ -1,6 +1,6 @@
 package GUI.PopUpWindows;
 
-import Connection.SingleGameInfo;
+import GameInfo.SingleGameInfo;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

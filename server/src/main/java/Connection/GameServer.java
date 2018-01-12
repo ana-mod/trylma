@@ -1,7 +1,10 @@
 package Connection;
 
+import Game.Piece;
 import Game.Play;
 import Game.Player;
+import GameInfo.BoardInfo;
+import GameInfo.SingleGameInfo;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -165,6 +168,10 @@ public class GameServer extends Thread
                         sendBoard(this);
 
                     }
+                    else if(msg instanceof GetActualPlayer)
+                    {
+                        output.writeObject(game.getActualPlayer().getNickname());
+                    }
                 }
                 catch (IOException | ClassNotFoundException e)
                 {
@@ -224,12 +231,15 @@ public class GameServer extends Thread
     private void sendBoard(ClientHandler clientHandler) throws IOException
     {
         boolean[][] board = clientHandler.game.getBoard().getBoard();
-        Boolean[][] boardWrapper = new Boolean[board.length][board[0].length];
+        int[][] pieces = new int[clientHandler.game.getBoard().getRownum()][clientHandler.game.getBoard().getColnum()];
 
-        for (int i=0; i <board.length; i++)
-            for (int j=0; j<board[i].length; j++)
-                boardWrapper[i][j] = board[i][j];
+        for(int i =0; i<pieces.length; i++)
+            for(int j=0; j<pieces[0].length; j++)
+                pieces[i][j] = -1;
 
-        clientHandler.output.writeObject(boardWrapper);
+        for(Piece piece : clientHandler.game.getBoard().getPieces())
+            pieces[piece.getRow()][piece.getCol()] = clientHandler.game.players.indexOf(piece.getOwner());
+
+        clientHandler.output.writeObject(new BoardInfo(board, pieces));
     }
 }

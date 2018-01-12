@@ -1,5 +1,7 @@
 package Connection;
 
+import GameInfo.SingleGameInfo;
+
 import java.io.Serializable;
 
 class NickAlreadyTaken implements Serializable {}
@@ -8,6 +10,7 @@ class GetAllGamesInfo implements Serializable {}
 class EndOfTransfer implements Serializable {}
 class GameAlreadyExists implements Serializable {}
 class GetBoard implements Serializable {}
+class GetActualPlayer implements Serializable {}
 
 class CreateNewGame implements Serializable
 {

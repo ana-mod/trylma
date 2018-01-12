@@ -1,4 +1,4 @@
-package Connection;
+package GameInfo;
 
 import java.io.Serializable;
 

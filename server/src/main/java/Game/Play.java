@@ -11,6 +11,13 @@ public class Play {
 	private boolean isStarted = false;
 	private String title;
 
+	public Player getActualPlayer ()
+	{
+		return actualPlayer;
+	}
+
+	private Player actualPlayer;
+
 	public boolean isStarted ()
 	{
 		return isStarted;
@@ -27,18 +34,18 @@ public class Play {
 	}
 
 	public void addPlayer(Player player) {
-	
-		players.add(player);
+
+		if(players.size() < numberOfPlayers)
+			players.add(player);
+
 		if(players.size() == numberOfPlayers)
 			start();
 	}
 	
 	public void start(){
-		if(numberOfPlayers!=players.size()) return;
 		isStarted=true;
+		actualPlayer = players.get(0);
 		createBoard();
-
-		
 	}
 	
 	public Play(int number){

@@ -1,18 +1,14 @@
 package GUI;
 
-import Connection.SingleGameInfo;
+import GameInfo.BoardInfo;
+import GameInfo.SingleGameInfo;
 import GUI.PopUpWindows.GameRulesWindow;
 import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -27,7 +23,7 @@ import javafx.stage.Stage;
 import Connection.ClientConnection;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import java.util.HashMap;
 
 public class MainWindow extends Application
 {
@@ -230,11 +226,16 @@ public class MainWindow extends Application
 
     private void setGameLayout() throws IOException, ClassNotFoundException
     {
-        Boolean[][] board = clientConnection.getBoard();
+        BoardInfo board = clientConnection.getBoard();
         gameLayout = new BorderPane();
         gameLayout.setCenter(boardPrint(board));
 
         mainLayout.setCenter(gameLayout);
+
+        Label label = new Label("abc");
+        label.setText(clientConnection.getActualPlayer());
+
+        mainLayout.setRight(label);
         window.setWidth(720);
         window.setHeight(950);
 
@@ -264,24 +265,49 @@ public class MainWindow extends Application
         return tableInfoTableView;
     }
 
-    private Group boardPrint(Boolean[][] board)
+    private BorderPane boardPrint(BoardInfo boardInfo)
     {
-        Group group = new Group();
+        Group boardGroup = new Group();
+        Group piecesGroup = new Group();
 
-        for(int i=0; i<board.length; i++)
-            for(int j=0; j<board[i].length; j++)
+        HashMap<Integer, Color> colorHashMap = new HashMap<>();
+        colorHashMap.put(0,Color.RED);
+        colorHashMap.put(1,Color.YELLOW);
+        colorHashMap.put(2,Color.GREEN);
+        colorHashMap.put(3,Color.BLUE);
+        colorHashMap.put(4,Color.ORANGE);
+        colorHashMap.put(5,Color.PURPLE);
 
-                if(board[i][j])
+        for(int i=0; i<boardInfo.getBoard().length; i++)
+            for(int j=0; j<boardInfo.getBoard()[i].length; j++)
+                if(boardInfo.getBoard()[i][j])
                 {
                     Circle circle = new Circle(20);
                     circle.setLayoutX((j+1) * 50 + (i%2)*25);
                     circle.setLayoutY((i+1) * 50);
                     circle.setFill(Color.WHITE);
                     circle.setStroke(Color.BLACK);
-                    circle.setOnMouseClicked(e -> circle.setFill(Color.GREEN));
-                    group.getChildren().add(circle);
+                    boardGroup.getChildren().add(circle);
                 }
 
-        return group;
+        for(int i=0; i<boardInfo.getPieces().length; i++)
+            for(int j=0; j<boardInfo.getPieces()[0].length; j++)
+            {
+                if(boardInfo.getPieces()[i][j] >=0 )
+                {
+                    Circle circle = new Circle(20);
+                    circle.setLayoutX((j + 1) * 50 + (i % 2) * 25);
+                    circle.setLayoutY((i + 1) * 50);
+                    circle.setStroke(Color.BLACK);
+                    circle.setFill(colorHashMap.get(boardInfo.getPieces()[i][j]));
+                    piecesGroup.getChildren().add(circle);
+                }
+            }
+
+        boardGroup.getChildren().addAll(piecesGroup);
+        BorderPane pane = new BorderPane();
+        pane.setCenter(boardGroup);
+
+        return pane;
     }
 }

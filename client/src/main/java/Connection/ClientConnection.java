@@ -1,18 +1,15 @@
 package Connection;
 
 import GUI.PopUpWindows.ServerErrorWindow;
-import javafx.application.Platform;
+import GameInfo.BoardInfo;
+import GameInfo.SingleGameInfo;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.CountDownLatch;
 
 public class ClientConnection extends Thread
 {
@@ -31,6 +28,13 @@ public class ClientConnection extends Thread
     }
 
     private String nickname;
+
+    public int getID ()
+    {
+        return ID;
+    }
+
+    private int ID;
 
 
     public int getReadyPlayers ()
@@ -120,10 +124,10 @@ public class ClientConnection extends Thread
             throw new IOException();
     }
 
-    public Boolean[][] getBoard() throws IOException, ClassNotFoundException
+    public BoardInfo getBoard() throws IOException, ClassNotFoundException
     {
         output.writeObject(new GetBoard());
-        return (Boolean[][]) input.readObject();
+        return (BoardInfo) input.readObject();
     }
 
     public boolean waitForPlayers()
@@ -156,5 +160,15 @@ public class ClientConnection extends Thread
         {
 
         }
+    }
+
+    public String getActualPlayer() throws IOException, ClassNotFoundException
+    {
+        output.writeObject(new GetActualPlayer());
+        Object msg = input.readObject();
+        if(msg instanceof String )
+            return (String) msg;
+        else
+            throw new ClassNotFoundException();
     }
 }
