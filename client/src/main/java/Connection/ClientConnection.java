@@ -2,6 +2,7 @@ package Connection;
 
 import GUI.PopUpWindows.ServerErrorWindow;
 import GameInfo.BoardInfo;
+import GameInfo.Move;
 import GameInfo.SingleGameInfo;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -131,20 +132,10 @@ public class ClientConnection implements Runnable// extends Thread
     public boolean waitForPlayers()
     {
         try
-        {/*
-            Object msg = input.readObject();
-
-            if (msg instanceof WaitingForPlayers)
-            {
-                if(((WaitingForPlayers) msg).getReady() == readyPlayers.get())
-                    readyPlayers.set(((WaitingForPlayers) msg).getReady());
-                //readyPlayers = ((WaitingForPlayers) msg).getReady();
-                return false;
-            }
-            return true;*/
+        {
             return input.readBoolean();
         }
-        catch (IOException ex)//| ClassNotFoundException ex)
+        catch (IOException ex)
         {
             ServerErrorWindow.displayWindow();
             return false;
@@ -159,5 +150,11 @@ public class ClientConnection implements Runnable// extends Thread
             return (String) msg;
         else
             throw new ClassNotFoundException();
+    }
+
+    public boolean sendNewMove(Move move) throws IOException, ClassNotFoundException
+    {
+        output.writeObject(move);
+        return (boolean) input.readObject();
     }
 }

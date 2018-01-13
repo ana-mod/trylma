@@ -51,7 +51,7 @@ public class Piece {
 	}
 	
 	
-	public void move(Player player, int row, int col){
+	public boolean move(Player player, int row, int col){
 	
 /*		if(board.getBoard()[row][col])
 		{
@@ -66,14 +66,15 @@ public class Piece {
 			}
 		}
 	*/
-		if(!board.getBoard()[row][col]) return; 	// if field isn't in board, return;
-		if(this.owner!=player) return;				// if player isn't owner of this piece, return;
-		if(!isMovePossible(row, col)) return;		// if piece wants to make wrong move, return;
-		if(board.isOccupied(row, col)) return;		// if piece wants to make move on occupied field, return
+		if(!board.getBoard()[row][col] || 	// if field isn't in board, return;
+			this.owner!=player ||			// if player isn't owner of this piece, return;
+			!isMovePossible(row, col) ||		// if piece wants to make wrong move, return;
+			board.isOccupied(row, col)) return false;		// if piece wants to make move on occupied field, return
+
 		if(isInDest) 
 		{
 			for(Point point : dest) if(point.x==row && point.y==col) break;
-			return;									//if piece is in its destination triangle and wants to leave it, return;
+			return false;									//if piece is in its destination triangle and wants to leave it, return;
 		}
 		//else - move is made:
 		if(Math.abs(this.row-row)==2 || Math.abs(this.col-col)==2) jump=true; 
@@ -82,6 +83,7 @@ public class Piece {
 		setRow(row);
 		setCol(col);
 		for(Point p : dest) if(p.x==row && p.y==col) isInDest=true;
+		return true;
 	
 	}
 	

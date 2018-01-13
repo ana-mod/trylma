@@ -1,5 +1,6 @@
 package GUI;
 
+import GameInfo.Board;
 import GameInfo.BoardInfo;
 import GameInfo.SingleGameInfo;
 import GUI.PopUpWindows.GameRulesWindow;
@@ -7,12 +8,7 @@ import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,14 +16,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import Connection.ClientConnection;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class MainWindow extends Application
 {
@@ -217,7 +209,7 @@ public class MainWindow extends Application
         Thread.sleep(15000);
         BoardInfo boardInfo = clientConnection.getBoard();
 
-        board = new Board(boardInfo);
+        board = new Board(boardInfo, clientConnection, this);
 
         gameLayout = new BorderPane();
         gameLayout.setCenter(board.printBoard());
@@ -255,6 +247,11 @@ public class MainWindow extends Application
         tableInfoTableView.setMaxWidth(403);
 
         return tableInfoTableView;
+    }
+
+    public void repaintGame()
+    {
+        gameLayout.setCenter(board.printBoard());
     }
 
 

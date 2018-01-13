@@ -1,5 +1,7 @@
 package Game;
 
+import GameInfo.Move;
+
 import java.util.ArrayList;
 
 public class Play {
@@ -67,5 +69,21 @@ public class Play {
 	
 	public Board getBoard(){
 		return board;
+	}
+
+	public boolean move(Player player, Move move)
+	{
+		if(player!=actualPlayer)
+			return false;
+
+		Piece piece = board.getPiece(move.x1, move.y1);
+
+		if(piece==null)
+			return false;
+
+		if(piece.getOwner()!=player)
+			return false;
+
+		 return piece.move(player, move.x2, move.y2);
 	}
 }

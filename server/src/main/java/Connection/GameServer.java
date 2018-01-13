@@ -4,6 +4,7 @@ import Game.Piece;
 import Game.Play;
 import Game.Player;
 import GameInfo.BoardInfo;
+import GameInfo.Move;
 import GameInfo.SingleGameInfo;
 
 import java.io.*;
@@ -165,11 +166,14 @@ public class GameServer extends Thread
                     else if(msg instanceof GetBoard)
                     {
                         sendBoard(this);
-
                     }
                     else if(msg instanceof GetActualPlayer)
                     {
                         output.writeObject(game.getActualPlayer().getNickname());
+                    }
+                    else if(msg instanceof Move)
+                    {
+                        output.writeObject(game.move(this,(Move) msg));
                     }
                 }
                 catch (IOException | ClassNotFoundException e)
