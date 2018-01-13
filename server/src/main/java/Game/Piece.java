@@ -32,7 +32,7 @@ public class Piece {
 	public int getRow(){
 		return row;
 	}
-	
+
 	public int getCol(){
 		return col;
 	}
@@ -118,27 +118,27 @@ public class Piece {
 		
 		if(!board.isOccupied(this.row-1, this.col+(this.row)%2))
 		{
-			if(col==this.col+(this.row)%2 && row==this.row-1) return true; //move one right&down 
+			if(col==this.col+(this.row)%2 && row==this.row-1) return true; //move one right&up 
 		}
-		else if (col==this.col-1 && row==this.row-2) return true; //move two right&down if one right&down's occupied
+		else if (col==this.col+1 && row==this.row-2) return true; //move two right&up if one right&up's occupied
 		
 		if(!board.isOccupied(this.row+1, this.col+(this.row)%2))
 		{
-			if(col==this.col+(this.row)%2 && row==this.row+1) return true; // move one right&up
+			if(col==this.col+(this.row)%2 && row==this.row+1) return true; // move one right&down
 		}
-		else if (col==this.col-1 && row==this.row+2) return true;
+		else if (col==this.col+1 && row==this.row+2) return true;
 		
 		if(!board.isOccupied(this.row-1, this.col+(this.row)%2-1))
 		{
-			if(col==this.col+(this.row)%2-1 && row==this.row-1) return true; //move one left down
+			if(col==this.col+(this.row)%2-1 && row==this.row-1) return true; //move one left up
 		}
-		else if (col==this.col+1 && row==this.row-2) return true;
+		else if (col==this.col-1 && row==this.row-2) return true; 
 		
 		if(!board.isOccupied(this.row+1, this.col+(this.row)%2-1))
 		{
-			if(col==this.col+(this.row)%2-1 && row==this.row+1) return true; //move one left up
+			if(col==this.col+(this.row)%2-1 && row==this.row+1) return true; //move one left down
 		}
-		else if (col==this.col+1 && row==this.row+2) return true;
+		else if (col==this.col-1 && row==this.row+2) return true;
 		
 	/*	if (col==this.col+1 && row==this.row && !board.isOccupied(row, col+1)) return true; // z prawej
 		else if (col==this.col+2 && row==this.row && board.isOccupied(row, this.col+1)) return true; // z prawej prawego
