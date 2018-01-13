@@ -3,7 +3,9 @@ package Connection;
 import GUI.PopUpWindows.ServerErrorWindow;
 import GameInfo.BoardInfo;
 import GameInfo.SingleGameInfo;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +13,7 @@ import javafx.collections.ObservableList;
 import java.io.*;
 import java.net.Socket;
 
-public class ClientConnection extends Thread
+public class ClientConnection implements Runnable// extends Thread
 {
     public ObjectOutputStream getOutput ()
     {
@@ -21,34 +23,30 @@ public class ClientConnection extends Thread
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private Socket socket;
+    private String nickname;
+
+    public boolean isIsGameStarted ()
+    {
+        return isGameStarted.get();
+    }
+
+    public BooleanProperty isGameStartedProperty ()
+    {
+        return isGameStarted;
+    }
+
+    public void setIsGameStarted (boolean isGameStarted)
+    {
+        this.isGameStarted.set(isGameStarted);
+    }
+
+    private BooleanProperty isGameStarted = new  SimpleBooleanProperty(false);
 
     public String getNickname ()
     {
         return nickname;
     }
 
-    private String nickname;
-
-    public int getID ()
-    {
-        return ID;
-    }
-
-    private int ID;
-
-
-    public int getReadyPlayers ()
-    {
-        return readyPlayers.getValue();
-    }
-
-    public IntegerProperty readyPlayersProperty ()
-    {
-        return readyPlayers;
-    }
-
-    private IntegerProperty readyPlayers = new SimpleIntegerProperty(1);
-    //private int readyPlayers;
 
     public ClientConnection (int port) throws IOException
     {
@@ -60,8 +58,8 @@ public class ClientConnection extends Thread
     @Override
     public void run ()
     {
-        Read readThread = new Read();
-        readThread.start();
+        while(!waitForPlayers());
+        isGameStarted.setValue(true);
     }
 
     public boolean setNickname(String nickname) throws ClassNotFoundException
@@ -150,15 +148,6 @@ public class ClientConnection extends Thread
         {
             ServerErrorWindow.displayWindow();
             return false;
-        }
-    }
-
-    protected class Read extends Thread
-    {
-        @Override
-        public void run ()
-        {
-
         }
     }
 

@@ -7,8 +7,10 @@ import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -24,6 +26,8 @@ import Connection.ClientConnection;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MainWindow extends Application
 {
@@ -37,6 +41,8 @@ public class MainWindow extends Application
     private BorderPane waitLayout;
 
     private ClientConnection clientConnection;
+
+    private Board board;
 
     public static void main(String[] args)
     {
@@ -191,54 +197,40 @@ public class MainWindow extends Application
 
     private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
     {
-        Label label = new Label("Czekanie na innych graczy");//, gotowych: ");
-        Label numberLabel = new Label(clientConnection.getReadyPlayers() + "");
-        HBox hBox = new HBox();
-        hBox.getChildren().addAll(label,numberLabel);
-        BooleanProperty isRdy = new SimpleBooleanProperty(false);
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10));
+        vBox.setSpacing(10);
 
-        //numberLabel.textProperty().bind(clientConnection.readyPlayersProperty().asString());
-
-        clientConnection.readyPlayersProperty().addListener( (v, oldV, newV) -> {
-            numberLabel.setText(newV + "");
-        });
+        Label label = new Label("Czekanie na innych graczy");
+        Label numberLabel = new Label("15s");
+        vBox.getChildren().addAll(label, numberLabel);
 
         waitLayout = new BorderPane();
-        waitLayout.setCenter(hBox);
-
+        waitLayout.setCenter(vBox);
         mainLayout.setCenter(waitLayout);
-/*
-        Task task = new Task<Void>() {
-            @Override public Void call() {
 
-                return null;
-            }
-        };*/
-            Thread.sleep(15000);
-            setGameLayout();
-
-/*
-        Platform.runLater(() -> {
-            while(!clientConnection.waitForPlayers())
-                numberLabel.setText(clientConnection.getReadyPlayers()+"");
-        });*/
+        setGameLayout();
     }
 
-    private void setGameLayout() throws IOException, ClassNotFoundException
+    private void setGameLayout() throws IOException, ClassNotFoundException, InterruptedException
     {
-        BoardInfo board = clientConnection.getBoard();
-        gameLayout = new BorderPane();
-        gameLayout.setCenter(boardPrint(board));
+        Thread.sleep(15000);
+        BoardInfo boardInfo = clientConnection.getBoard();
 
-        mainLayout.setCenter(gameLayout);
+        board = new Board(boardInfo);
+
+        gameLayout = new BorderPane();
+        gameLayout.setCenter(board.printBoard());
 
         Label label = new Label("abc");
         label.setText(clientConnection.getActualPlayer());
+        gameLayout.setRight(label);
+        gameLayout.setPadding(new Insets(10));
 
-        mainLayout.setRight(label);
-        window.setWidth(720);
+        mainLayout.setCenter(gameLayout);
+
+        window.setWidth(1000);
         window.setHeight(950);
-
     }
 
     private TableView<SingleGameInfo> prepareTableForSingleGameInfo() throws ClassNotFoundException, IOException
@@ -265,49 +257,5 @@ public class MainWindow extends Application
         return tableInfoTableView;
     }
 
-    private BorderPane boardPrint(BoardInfo boardInfo)
-    {
-        Group boardGroup = new Group();
-        Group piecesGroup = new Group();
 
-        HashMap<Integer, Color> colorHashMap = new HashMap<>();
-        colorHashMap.put(0,Color.RED);
-        colorHashMap.put(1,Color.YELLOW);
-        colorHashMap.put(2,Color.GREEN);
-        colorHashMap.put(3,Color.BLUE);
-        colorHashMap.put(4,Color.ORANGE);
-        colorHashMap.put(5,Color.PURPLE);
-
-        for(int i=0; i<boardInfo.getBoard().length; i++)
-            for(int j=0; j<boardInfo.getBoard()[i].length; j++)
-                if(boardInfo.getBoard()[i][j])
-                {
-                    Circle circle = new Circle(20);
-                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
-                    circle.setLayoutY((i+1) * 50);
-                    circle.setFill(Color.WHITE);
-                    circle.setStroke(Color.BLACK);
-                    boardGroup.getChildren().add(circle);
-                }
-
-        for(int i=0; i<boardInfo.getPieces().length; i++)
-            for(int j=0; j<boardInfo.getPieces()[0].length; j++)
-            {
-                if(boardInfo.getPieces()[i][j] >=0 )
-                {
-                    Circle circle = new Circle(20);
-                    circle.setLayoutX((j + 1) * 50 + (i % 2) * 25);
-                    circle.setLayoutY((i + 1) * 50);
-                    circle.setStroke(Color.BLACK);
-                    circle.setFill(colorHashMap.get(boardInfo.getPieces()[i][j]));
-                    piecesGroup.getChildren().add(circle);
-                }
-            }
-
-        boardGroup.getChildren().addAll(piecesGroup);
-        BorderPane pane = new BorderPane();
-        pane.setCenter(boardGroup);
-
-        return pane;
-    }
 }

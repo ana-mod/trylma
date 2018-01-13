@@ -1,7 +1,9 @@
 package Connection;
 
 import GameInfo.SingleGameInfo;
+import javafx.event.Event;
 
+import javax.swing.event.ChangeEvent;
 import java.io.Serializable;
 
 class NickAlreadyTaken implements Serializable {}

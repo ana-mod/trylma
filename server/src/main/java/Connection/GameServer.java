@@ -147,7 +147,6 @@ public class GameServer extends Thread
                         {
                             createNewGame(this,(SingleGameInfo) msg);
                         }
-                        //waitForOtherPlayers();
                     }
                     else if(msg instanceof ConnectToGame)
                     {
@@ -194,12 +193,19 @@ public class GameServer extends Thread
             output.writeObject(new TaskCompleted());
         }
 
-        private void waitForOtherPlayers() throws IOException, InterruptedException
+        private void waitForOtherPlayers() throws IOException
         {
             while(!game.isStarted())
             {
                 output.writeBoolean(game.isStarted());
-                this.sleep(1000);
+                try
+                {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e)
+                {
+
+                }
             }
         }
     }
