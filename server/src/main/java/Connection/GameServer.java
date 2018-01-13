@@ -248,4 +248,9 @@ public class GameServer extends Thread
 
         clientHandler.output.writeObject(new BoardInfo(board, pieces));
     }
+
+    public void repaintGame()
+    {
+
+    }
 }

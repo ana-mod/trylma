@@ -37,24 +37,25 @@ public class Board
         piecesGroup = new Group();
 
         for(int i=0; i<boardInfo.getBoard().length; i++)
-            for(int j=0; j<boardInfo.getBoard()[i].length; j++)
-                if(boardInfo.getBoard()[i][j])
+        {
+            for (int j = 0; j < boardInfo.getBoard()[i].length; j++)
+                if (boardInfo.getBoard()[i][j])
                 {
+                    System.out.print(i + "," + j + " ");
                     Circle circle = new Circle(20);
-                    circle.setLayoutX((j+1) * 50 + (i%2)*25);
-                    circle.setLayoutY((i+1) * 50);
+                    circle.setLayoutX((j + 1) * 50 + (i % 2) * 25);
+                    circle.setLayoutY((i + 1) * 50);
                     circle.setFill(Color.WHITE);
                     circle.setStroke(Color.BLACK);
 
                     circle.setOnMouseClicked(e -> {
-                        if(selected!=null)
-                        {
-                            move = new Move()
-                        }
+                        System.out.println(getIndexX(circle) + " " + getIndexY(circle));
 
                     });
                     boardGroup.getChildren().add(circle);
                 }
+            System.out.println();
+        }
 
         for(int i=0; i<boardInfo.getPieces().length; i++)
             for(int j=0; j<boardInfo.getPieces()[0].length; j++)
@@ -101,5 +102,15 @@ public class Board
         BorderPane pane = new BorderPane();
         pane.setCenter(group);
         return pane;
+    }
+
+    private int getIndexX(Circle circle)
+    {
+        return ((int)circle.getLayoutY())/50 - 1;
+    }
+
+    private int getIndexY(Circle circle)
+    {
+        return ((int)circle.getLayoutX() - (getIndexX(circle)%2)*25)/50 -1;
     }
 }
