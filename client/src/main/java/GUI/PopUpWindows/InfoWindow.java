@@ -1,5 +1,6 @@
 package GUI.PopUpWindows;
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -26,10 +27,12 @@ public class InfoWindow
 
         messageBox = new Label(message);
 
-        layout = new VBox();
+        layout = new VBox(10);
+        layout.setPadding(new Insets(10));
         layout.getChildren().add(messageBox);
 
         scene = new Scene(layout);
+        scene.getStylesheets().add("SceneStyle.css");
 
         window.setScene(scene);
     }

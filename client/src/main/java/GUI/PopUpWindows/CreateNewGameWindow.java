@@ -1,6 +1,6 @@
 package GUI.PopUpWindows;
 
-import Connection.SingleGameInfo;
+import GameInfo.SingleGameInfo;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -45,8 +45,9 @@ public class CreateNewGameWindow
         Button create = new Button("Create");
         create.setOnAction(e -> window.close());
 
-        layout.getChildren().addAll(h1,h2);
+        layout.getChildren().addAll(h1,h2,create);
         scene= new Scene(layout,400,300);
+        scene.getStylesheets().add("SceneStyle.css");
         window.setScene(scene);
     }
 

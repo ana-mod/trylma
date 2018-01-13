@@ -1,6 +1,8 @@
 package GUI;
 
-import Connection.SingleGameInfo;
+import GameInfo.Board;
+import GameInfo.BoardInfo;
+import GameInfo.SingleGameInfo;
 import GUI.PopUpWindows.GameRulesWindow;
 import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
@@ -27,8 +29,12 @@ public class MainWindow extends Application
     private BorderPane mainLayout;
     private VBox entryLayout;
     private VBox lobbyLayout;
+    private BorderPane gameLayout;
+    private BorderPane waitLayout;
 
     private ClientConnection clientConnection;
+
+    private Board board;
 
     public static void main(String[] args)
     {
@@ -47,6 +53,7 @@ public class MainWindow extends Application
         }
 
         window = primaryStage;
+        window.setTitle("ChineseCheckers");
         mainLayout = new BorderPane();
 
         setMenuBar();
@@ -124,6 +131,7 @@ public class MainWindow extends Application
 
     private void setLobbyLayout () throws ClassNotFoundException, IOException
     {
+        window.setTitle(window.getTitle() + "-" + clientConnection.getNickname());
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
 
@@ -132,9 +140,12 @@ public class MainWindow extends Application
         Button newGameButton = new Button("Nowa Gra");
         newGameButton.setOnAction(e -> {
             try{
-                clientConnection.createNewGame(CreateNewGameWindow.displayWindow());
-                tableInfoTableView.setItems(clientConnection.getAllGamesInfo());
-            }catch (IOException | ClassNotFoundException ex)
+                SingleGameInfo gameInfo = CreateNewGameWindow.displayWindow();
+                if(!clientConnection.createNewGame(gameInfo))
+                    System.out.println("gameAlreadyexists");
+                clientConnection.connectToGame(gameInfo);
+                setWaitLayout();
+            }catch (IOException | ClassNotFoundException | InterruptedException ex)
             {
                 ServerErrorWindow.displayWindow();
             }
@@ -142,11 +153,76 @@ public class MainWindow extends Application
         });
 
         Button joinGameButton = new Button("Połącz");
+        joinGameButton.setOnAction(e -> {
+            try
+            {
+                clientConnection.connectToGame(tableInfoTableView.getSelectionModel().getSelectedItem());
+                setWaitLayout();
+            }
+            catch (IOException | ClassNotFoundException | InterruptedException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+        });
+
+        Button refreshButton = new Button("Odśwież");
+        refreshButton.setOnAction(e -> {
+            try
+            {
+                setLobbyLayout();
+            }
+            catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+
+        });
 
         HBox hBox = new HBox(10);
-        hBox.getChildren().addAll(newGameButton,joinGameButton);
+        hBox.getChildren().addAll(newGameButton,joinGameButton, refreshButton);
         lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
+        lobbyLayout.setMinSize(500,800);
         mainLayout.setCenter(lobbyLayout);
+        window.setWidth(433);
+        window.setHeight(600);
+    }
+
+    private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
+    {
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10));
+        vBox.setSpacing(10);
+
+        Label label = new Label("Czekanie na innych graczy");
+        Label numberLabel = new Label("15s");
+        vBox.getChildren().addAll(label, numberLabel);
+
+        waitLayout = new BorderPane();
+        waitLayout.setCenter(vBox);
+        mainLayout.setCenter(waitLayout);
+
+        setGameLayout();
+    }
+
+    private void setGameLayout() throws IOException, ClassNotFoundException, InterruptedException
+    {
+        Thread.sleep(15000);
+        BoardInfo boardInfo = clientConnection.getBoard();
+
+        board = new Board(boardInfo, clientConnection, this);
+
+        gameLayout = new BorderPane();
+        gameLayout.setCenter(board.printBoard());
+
+        Label label = new Label("abc");
+        label.setText(clientConnection.getActualPlayer());
+        gameLayout.setRight(label);
+        gameLayout.setPadding(new Insets(10));
+
+        mainLayout.setCenter(gameLayout);
+
+        window.setWidth(1000);
+        window.setHeight(950);
     }
 
     private TableView<SingleGameInfo> prepareTableForSingleGameInfo() throws ClassNotFoundException, IOException
@@ -172,4 +248,11 @@ public class MainWindow extends Application
 
         return tableInfoTableView;
     }
+
+    public void repaintGame()
+    {
+        gameLayout.setCenter(board.printBoard());
+    }
+
+
 }

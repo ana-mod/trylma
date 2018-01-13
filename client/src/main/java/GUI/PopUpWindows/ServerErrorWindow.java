@@ -1,5 +1,6 @@
 package GUI.PopUpWindows;
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,10 +33,12 @@ public class ServerErrorWindow
         Button exitButton = new Button("exit");
         exitButton.setOnAction(e -> System.exit(-1));
 
-        layout = new VBox();
+        layout = new VBox(10);
+        layout.setPadding(new Insets(10));
         layout.getChildren().addAll(messageBox, exitButton);
 
         scene = new Scene(layout);
+        scene.getStylesheets().add("SceneStyle.css");
 
         window.setScene(scene);
     }

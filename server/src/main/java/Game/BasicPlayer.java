@@ -31,6 +31,12 @@ public class BasicPlayer implements Player {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public String getNickname()
+	{
+		return null;
+	}
 	
 	@Override
 	public String toString(){

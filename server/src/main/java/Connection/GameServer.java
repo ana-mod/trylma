@@ -1,7 +1,11 @@
 package Connection;
 
+import Game.Piece;
 import Game.Play;
 import Game.Player;
+import GameInfo.BoardInfo;
+import GameInfo.Move;
+import GameInfo.SingleGameInfo;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -70,6 +74,8 @@ public class GameServer extends Thread
         private ObjectOutputStream output;
 
         private String nickname;
+        private Play game;
+
         public String getNickname ()
         {
             return nickname;
@@ -140,8 +146,34 @@ public class GameServer extends Thread
                         msg=input.readObject();
                         if(msg instanceof SingleGameInfo)
                         {
-                            games.add(new Play(((SingleGameInfo) msg).getMaxPlayers()));
+                            createNewGame(this,(SingleGameInfo) msg);
                         }
+                    }
+                    else if(msg instanceof ConnectToGame)
+                    {
+                        Play p = null;
+                        for(Play play : games)
+                        {
+                            if(play.getTitle().equals(((ConnectToGame) msg).getSingleGameInfo().getTitle()))
+                            {
+                                p=play;
+                                break;
+                            }
+                        }
+                        connectToGame(p);
+                        //waitForOtherPlayers();
+                    }
+                    else if(msg instanceof GetBoard)
+                    {
+                        sendBoard(this);
+                    }
+                    else if(msg instanceof GetActualPlayer)
+                    {
+                        output.writeObject(game.getActualPlayer().getNickname());
+                    }
+                    else if(msg instanceof Move)
+                    {
+                        output.writeObject(game.move(this,(Move) msg));
                     }
                 }
                 catch (IOException | ClassNotFoundException e)
@@ -157,12 +189,72 @@ public class GameServer extends Thread
         {
 
         }
+
+        private void connectToGame(Play play) throws IOException
+        {
+            this.game = play;
+            game.addPlayer(this);
+            output.writeObject(new TaskCompleted());
+        }
+
+        private void waitForOtherPlayers() throws IOException
+        {
+            while(!game.isStarted())
+            {
+                output.writeBoolean(game.isStarted());
+                try
+                {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e)
+                {
+
+                }
+            }
+        }
     }
+
+    private void createNewGame(ClientHandler clientHandler, SingleGameInfo singleGameInfo) throws IOException
+    {
+        for(Play p : games)
+            if(p.getTitle().equals(singleGameInfo.getTitle()))
+            {
+                clientHandler.output.writeObject(new GameAlreadyExists());
+                return;
+            }
+
+        Play p = new Play(singleGameInfo.getMaxPlayers());
+        p.setTitle(singleGameInfo.getTitle());
+        games.add(p);
+        clientHandler.output.writeObject(new TaskCompleted());
+    }
+
+
 
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {
         for(Play p : games)
-            clientHandler.output.writeObject(new SingleGameInfo("haha",p.getNumberOfPlayers(), p.players.size()));
+            clientHandler.output.writeObject(new SingleGameInfo(p.getTitle(),p.getNumberOfPlayers(), p.players.size()));
         clientHandler.output.writeObject(new EndOfTransfer());
+    }
+
+    private void sendBoard(ClientHandler clientHandler) throws IOException
+    {
+        boolean[][] board = clientHandler.game.getBoard().getBoard();
+        int[][] pieces = new int[clientHandler.game.getBoard().getRownum()][clientHandler.game.getBoard().getColnum()];
+
+        for(int i =0; i<pieces.length; i++)
+            for(int j=0; j<pieces[0].length; j++)
+                pieces[i][j] = -1;
+
+        for(Piece piece : clientHandler.game.getBoard().getPieces())
+            pieces[piece.getRow()][piece.getCol()] = clientHandler.game.players.indexOf(piece.getOwner());
+
+        clientHandler.output.writeObject(new BoardInfo(board, pieces));
+    }
+
+    public void repaintGame()
+    {
+
     }
 }
