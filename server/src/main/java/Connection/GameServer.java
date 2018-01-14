@@ -81,6 +81,18 @@ public class GameServer extends Thread
             return nickname;
         }
 
+        @Override
+        public void notify (Move mv)
+        {
+            try
+            {
+                output.writeObject(mv);
+            }
+            catch (IOException e)
+            {
+            }
+        }
+
         public ClientHandler (Socket socket)
         {
             try
@@ -173,7 +185,10 @@ public class GameServer extends Thread
                     }
                     else if(msg instanceof Move)
                     {
-                        output.writeObject(game.move(this,(Move) msg));
+                        boolean isMade = game.move(this,(Move) msg);
+                        output.writeObject(isMade);
+                        if(isMade)
+                            notifyAllPlayersExceptOne(game, (Move) msg, this);
                     }
                     else if(msg instanceof EndOfMove)
                     {
@@ -257,8 +272,21 @@ public class GameServer extends Thread
         clientHandler.output.writeObject(new BoardInfo(board, pieces));
     }
 
-    public void repaintGame()
+    private void notifyAllPlayers(Play game, Move move)
     {
-
+        for(Player player : game.players)
+        {
+            player.notify(move);
+        }
     }
+
+    private void notifyAllPlayersExceptOne(Play game, Move move, Player p)
+    {
+        for(Player player : game.players)
+        {
+            if(!player.equals(p))
+                player.notify(move);
+        }
+    }
+
 }

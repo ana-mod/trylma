@@ -1,45 +1,22 @@
 package Connection;
 
 import GUI.PopUpWindows.ServerErrorWindow;
-import GameInfo.BoardInfo;
-import GameInfo.Move;
-import GameInfo.SingleGameInfo;
+import GameInfo.*;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.net.Socket;
 
-public class ClientConnection implements Runnable// extends Thread
-{
-    public ObjectOutputStream getOutput ()
-    {
-        return output;
-    }
-
-    private ObjectOutputStream output;
+public class ClientConnection
+{    private ObjectOutputStream output;
     private ObjectInputStream input;
     private Socket socket;
     private String nickname;
-
-    public boolean isIsGameStarted ()
-    {
-        return isGameStarted.get();
-    }
-
-    public BooleanProperty isGameStartedProperty ()
-    {
-        return isGameStarted;
-    }
-
-    public void setIsGameStarted (boolean isGameStarted)
-    {
-        this.isGameStarted.set(isGameStarted);
-    }
 
     private BooleanProperty isGameStarted = new  SimpleBooleanProperty(false);
 
@@ -47,20 +24,19 @@ public class ClientConnection implements Runnable// extends Thread
     {
         return nickname;
     }
+    private Board board;
+    private ReadGameData readGameData = null;
 
+    public void setBoard (Board board)
+    {
+        this.board = board;
+    }
 
     public ClientConnection (int port) throws IOException
     {
         this.socket = new Socket("localhost", port);
         this.output = new ObjectOutputStream(socket.getOutputStream());
         this.input = new ObjectInputStream(socket.getInputStream());
-    }
-
-    @Override
-    public void run ()
-    {
-        while(!waitForPlayers());
-        isGameStarted.setValue(true);
     }
 
     public boolean setNickname(String nickname) throws ClassNotFoundException
@@ -161,5 +137,54 @@ public class ClientConnection implements Runnable// extends Thread
     public void endOfMove() throws IOException, ClassNotFoundException
     {
         output.writeObject(new EndOfMove());
+    }
+
+    public Move getMove() throws ClassNotFoundException, IOException
+    {
+        return (Move) input.readObject();
+    }
+
+    public class ReadGameData extends Thread
+    {
+        @Override
+        public void run ()
+        {
+            while (!isInterrupted())
+            {
+                try
+                {
+                    Object msg = input.readObject();
+                    if(msg instanceof Move)
+                    {
+                        Platform.runLater(new Runnable()
+                        {
+                            @Override
+                            public void run ()
+                            {
+                                board.move((Move) msg);
+                            }
+                        });
+                    }
+                    else
+                    {
+                    }
+
+                }
+                catch (IOException | ClassNotFoundException ex)
+                {
+                    ServerErrorWindow.displayWindow();
+                }
+
+            }
+        }
+    }
+
+    public void startReadGameData()
+    {
+        if(readGameData == null)
+            readGameData = new ReadGameData();
+
+        if(!readGameData.isAlive())
+            readGameData.start();
     }
 }

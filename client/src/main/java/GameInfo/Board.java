@@ -57,10 +57,13 @@ public class Board
                     circle.setOnMouseClicked(e -> {
                         try
                         {
-                            Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
-                            Boolean hasMoved = player.sendNewMove(mv);
-                            if(hasMoved)
-                                this.move(mv);
+                            if(selected!= null)
+                            {
+                                Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
+                                Boolean hasMoved = player.sendNewMove(mv);
+                                if (hasMoved)
+                                    this.move(mv);
+                            }
                         }
                         catch (IOException | ClassNotFoundException ex)
                         {

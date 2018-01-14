@@ -1,5 +1,7 @@
 package Game;
 
+import GameInfo.Move;
+
 public class BasicPlayer implements Player {
 
 
@@ -37,7 +39,13 @@ public class BasicPlayer implements Player {
 	{
 		return null;
 	}
-	
+
+	@Override
+	public void notify (Move mv)
+	{
+
+	}
+
 	@Override
 	public String toString(){
 		return side+"";
