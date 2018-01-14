@@ -41,7 +41,7 @@ public class BasicPlayer implements Player {
 	}
 
 	@Override
-	public void notify (Move mv)
+	public void notify (Object msg)
 	{
 
 	}

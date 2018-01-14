@@ -65,6 +65,7 @@ public class MainWindow extends Application
         scene.getStylesheets().add("SceneStyle.css");
         window.setScene(scene);
         window.show();
+        window.setOnCloseRequest(e -> System.exit(0));
     }
 
     private void setMenuBar ()
@@ -229,6 +230,7 @@ public class MainWindow extends Application
             try
             {
                 sendEndOfMove();
+                clientConnection.startReadGameData();
             }
             catch (IOException | ClassNotFoundException ex)
             {
@@ -278,9 +280,17 @@ public class MainWindow extends Application
         gameLayout.setCenter(board.printBoard());
     }
 
-    public void setActualPlayer () throws ClassNotFoundException, IOException
+    public void setActualPlayer ()
     {
-        actualPlayerLabel.setText(clientConnection.getActualPlayer());
+        try
+        {
+            actualPlayerLabel.setText(clientConnection.getActualPlayer());
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            ServerErrorWindow.displayWindow();
+        }
+
     }
 
     public void sendEndOfMove () throws IOException, ClassNotFoundException

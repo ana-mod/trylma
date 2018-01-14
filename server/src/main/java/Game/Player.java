@@ -6,5 +6,5 @@ public interface Player
 {
     abstract void move();
     abstract String getNickname();
-    abstract void notify (Move mv);
+    abstract void notify (Object msg);
 }

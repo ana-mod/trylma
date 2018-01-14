@@ -3,6 +3,7 @@ package GameInfo;
 import Connection.ClientConnection;
 import GUI.MainWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -140,11 +141,16 @@ public class Board
                 {
                     ((Circle) c).setLayoutX(getLayoutXFromIndex(move.x2, move.y2));
                     ((Circle) c).setLayoutY(getLayoutYFromIndex(move.x2, move.y2));
-                    window.repaintGame();
+                    Platform.runLater(() -> window.repaintGame());
                     return;
                 }
             }
         }
+    }
+
+    public void setActualPlayer()
+    {
+        Platform.runLater(() -> window.setActualPlayer());
     }
 
     private int getLayoutYFromIndex(int x, int y)

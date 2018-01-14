@@ -156,35 +156,30 @@ public class ClientConnection
                     Object msg = input.readObject();
                     if(msg instanceof Move)
                     {
-                        Platform.runLater(new Runnable()
-                        {
-                            @Override
-                            public void run ()
-                            {
-                                board.move((Move) msg);
-                            }
-                        });
+                        Platform.runLater( () -> board.move((Move) msg));
                     }
-                    else
+                    else if (msg instanceof EndOfMove)
                     {
+                        board.setActualPlayer();
+                        if(getActualPlayer().equals(nickname))
+                            this.interrupt();
                     }
-
                 }
                 catch (IOException | ClassNotFoundException ex)
                 {
-                    ServerErrorWindow.displayWindow();
+                    break;
                 }
-
             }
         }
     }
 
     public void startReadGameData()
     {
-        if(readGameData == null)
-            readGameData = new ReadGameData();
+        if(readGameData!=null)
+            if(!readGameData.isInterrupted())
+                readGameData.interrupt();
 
-        if(!readGameData.isAlive())
-            readGameData.start();
+        readGameData = new ReadGameData();
+        readGameData.start();
     }
 }

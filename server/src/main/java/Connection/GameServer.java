@@ -82,11 +82,11 @@ public class GameServer extends Thread
         }
 
         @Override
-        public void notify (Move mv)
+        public void notify (Object msg)
         {
             try
             {
-                output.writeObject(mv);
+                output.writeObject(msg);
             }
             catch (IOException e)
             {
@@ -193,6 +193,7 @@ public class GameServer extends Thread
                     else if(msg instanceof EndOfMove)
                     {
                         game.endOfMove();
+                        notifyAllPlayersExceptOne(game, msg, this);
                     }
                 }
                 catch (IOException | ClassNotFoundException e)
@@ -272,21 +273,20 @@ public class GameServer extends Thread
         clientHandler.output.writeObject(new BoardInfo(board, pieces));
     }
 
-    private void notifyAllPlayers(Play game, Move move)
+    private void notifyAllPlayers(Play game, Object msg)
     {
         for(Player player : game.players)
         {
-            player.notify(move);
+            player.notify(msg);
         }
     }
 
-    private void notifyAllPlayersExceptOne(Play game, Move move, Player p)
+    private void notifyAllPlayersExceptOne(Play game, Object msg, Player p)
     {
         for(Player player : game.players)
         {
             if(!player.equals(p))
-                player.notify(move);
+                player.notify(msg);
         }
     }
-
 }
