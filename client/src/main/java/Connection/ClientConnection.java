@@ -157,4 +157,9 @@ public class ClientConnection implements Runnable// extends Thread
         output.writeObject(move);
         return (boolean) input.readObject();
     }
+
+    public void endOfMove() throws IOException, ClassNotFoundException
+    {
+        output.writeObject(new EndOfMove());
+    }
 }

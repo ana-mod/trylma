@@ -153,6 +153,4 @@ public class Board
     {
         return (y+1)*50 + (x%2)*25;
     }
-
-
 }

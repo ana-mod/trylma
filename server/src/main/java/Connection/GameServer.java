@@ -175,6 +175,10 @@ public class GameServer extends Thread
                     {
                         output.writeObject(game.move(this,(Move) msg));
                     }
+                    else if(msg instanceof EndOfMove)
+                    {
+                        game.endOfMove();
+                    }
                 }
                 catch (IOException | ClassNotFoundException e)
                 {

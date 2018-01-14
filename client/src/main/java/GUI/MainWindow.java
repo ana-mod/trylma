@@ -31,6 +31,7 @@ public class MainWindow extends Application
     private VBox lobbyLayout;
     private BorderPane gameLayout;
     private BorderPane waitLayout;
+    private Label actualPlayerLabel;
 
     private ClientConnection clientConnection;
 
@@ -214,9 +215,24 @@ public class MainWindow extends Application
         gameLayout = new BorderPane();
         gameLayout.setCenter(board.printBoard());
 
-        Label label = new Label("abc");
-        label.setText(clientConnection.getActualPlayer());
-        gameLayout.setRight(label);
+        VBox vBox = new VBox(10);
+        actualPlayerLabel = new Label("c");
+        setActualPlayer();
+
+        Button endOfMoveButton = new Button("Koniec ruchu");
+        endOfMoveButton.setOnAction(e -> {
+            try
+            {
+                sendEndOfMove();
+            }
+            catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+        });
+        vBox.getChildren().addAll(endOfMoveButton, actualPlayerLabel);
+
+        gameLayout.setTop(vBox);
         gameLayout.setPadding(new Insets(10));
 
         mainLayout.setCenter(gameLayout);
@@ -252,6 +268,16 @@ public class MainWindow extends Application
     public void repaintGame()
     {
         gameLayout.setCenter(board.printBoard());
+    }
+
+    public void setActualPlayer() throws ClassNotFoundException, IOException
+    {
+        actualPlayerLabel.setText(clientConnection.getActualPlayer());
+    }
+
+    public void sendEndOfMove() throws IOException, ClassNotFoundException
+    {
+        clientConnection.endOfMove();
     }
 
 
