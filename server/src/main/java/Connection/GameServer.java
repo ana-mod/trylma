@@ -17,7 +17,6 @@ public class GameServer extends Thread
     private ServerSocket serverSocket;
     private Vector<ClientHandler> clietConnections = new Vector<ClientHandler>();
     private Vector<Play> games = new Vector<Play>();
-
     private static GameServer instance;
 
     private GameServer (int port) throws IOException
@@ -67,6 +66,60 @@ public class GameServer extends Thread
         clietConnections.add(new ClientHandler(connection));
     }
 
+    private void createNewGame(ClientHandler clientHandler, SingleGameInfo singleGameInfo) throws IOException
+    {
+        for(Play p : games)
+            if(p.getTitle().equals(singleGameInfo.getTitle()))
+            {
+                clientHandler.output.writeObject(new GameAlreadyExists());
+                return;
+            }
+
+        Play p = new Play(singleGameInfo.getMaxPlayers());
+        p.setTitle(singleGameInfo.getTitle());
+        games.add(p);
+        clientHandler.notify(new TaskCompleted());
+    }
+
+    private void sendGamesInfo(ClientHandler clientHandler) throws IOException
+    {
+        for(Play p : games)
+            if(!p.isStarted()) clientHandler.output.writeObject(new SingleGameInfo(p.getTitle(),p.getNumberOfPlayers(), p.players.size()));
+        clientHandler.notify(new EndOfTransfer());
+    }
+
+    private void sendBoard(ClientHandler clientHandler) throws IOException
+    {
+        boolean[][] board = clientHandler.game.getBoard().getBoard();
+        int[][] pieces = new int[clientHandler.game.getBoard().getRownum()][clientHandler.game.getBoard().getColnum()];
+
+        for(int i =0; i<pieces.length; i++)
+            for(int j=0; j<pieces[0].length; j++)
+                pieces[i][j] = -1;
+
+        for(Piece piece : clientHandler.game.getBoard().getPieces())
+            pieces[piece.getRow()][piece.getCol()] = clientHandler.game.players.indexOf(piece.getOwner());
+
+        clientHandler.output.writeObject(new BoardInfo(board, pieces));
+    }
+
+    private void notifyAllPlayers(Play game, Object msg)
+    {
+        for(Player player : game.players)
+        {
+            player.notify(msg);
+        }
+    }
+
+    private void notifyAllPlayersExceptOne(Play game, Object msg, Player p)
+    {
+        for(Player player : game.players)
+        {
+            if(!player.equals(p))
+                player.notify(msg);
+        }
+    }
+
     protected class ClientHandler extends Thread implements Player
     {
         private Socket socket;
@@ -79,19 +132,6 @@ public class GameServer extends Thread
         public String getNickname ()
         {
             return nickname;
-        }
-
-        @Override
-        public void notify (Object msg)
-        {
-            try
-            {
-                output.writeObject(msg);
-            }
-            catch (IOException e)
-            {
-                delete();
-            }
         }
 
         public ClientHandler (Socket socket)
@@ -109,6 +149,19 @@ public class GameServer extends Thread
                 delete();
             }
             start();
+        }
+
+        @Override
+        public void notify (Object msg)
+        {
+            try
+            {
+                output.writeObject(msg);
+            }
+            catch (IOException e)
+            {
+                delete();
+            }
         }
 
         public void setNickname () throws IOException, ClassNotFoundException
@@ -212,6 +265,13 @@ public class GameServer extends Thread
             }
         }
 
+        private void connectToGame(Play play) throws IOException
+        {
+            this.game = play;
+            game.addPlayer(this);
+            output.writeObject(new TaskCompleted());
+        }
+
         private void delete()
         {
             clietConnections.remove(this);
@@ -221,18 +281,6 @@ public class GameServer extends Thread
                 if(this.equals(game.getActualPlayer()))
                     notifyAllPlayersExceptOne(game, new EndOfMove(), this);
             }
-        }
-
-        public void move ()
-        {
-
-        }
-
-        private void connectToGame(Play play) throws IOException
-        {
-            this.game = play;
-            game.addPlayer(this);
-            output.writeObject(new TaskCompleted());
         }
 
         /*
@@ -251,59 +299,5 @@ public class GameServer extends Thread
                 }
             }
         }*/
-    }
-
-    private void createNewGame(ClientHandler clientHandler, SingleGameInfo singleGameInfo) throws IOException
-    {
-        for(Play p : games)
-            if(p.getTitle().equals(singleGameInfo.getTitle()))
-            {
-                clientHandler.output.writeObject(new GameAlreadyExists());
-                return;
-            }
-
-        Play p = new Play(singleGameInfo.getMaxPlayers());
-        p.setTitle(singleGameInfo.getTitle());
-        games.add(p);
-        clientHandler.output.writeObject(new TaskCompleted());
-    }
-
-    private void sendGamesInfo(ClientHandler clientHandler) throws IOException
-    {
-        for(Play p : games)
-            clientHandler.output.writeObject(new SingleGameInfo(p.getTitle(),p.getNumberOfPlayers(), p.players.size()));
-        clientHandler.output.writeObject(new EndOfTransfer());
-    }
-
-    private void sendBoard(ClientHandler clientHandler) throws IOException
-    {
-        boolean[][] board = clientHandler.game.getBoard().getBoard();
-        int[][] pieces = new int[clientHandler.game.getBoard().getRownum()][clientHandler.game.getBoard().getColnum()];
-
-        for(int i =0; i<pieces.length; i++)
-            for(int j=0; j<pieces[0].length; j++)
-                pieces[i][j] = -1;
-
-        for(Piece piece : clientHandler.game.getBoard().getPieces())
-            pieces[piece.getRow()][piece.getCol()] = clientHandler.game.players.indexOf(piece.getOwner());
-
-        clientHandler.output.writeObject(new BoardInfo(board, pieces));
-    }
-
-    private void notifyAllPlayers(Play game, Object msg)
-    {
-        for(Player player : game.players)
-        {
-            player.notify(msg);
-        }
-    }
-
-    private void notifyAllPlayersExceptOne(Play game, Object msg, Player p)
-    {
-        for(Player player : game.players)
-        {
-            if(!player.equals(p))
-                player.notify(msg);
-        }
     }
 }
