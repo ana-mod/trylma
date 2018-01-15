@@ -8,6 +8,7 @@ import GUI.PopUpWindows.InfoWindow;
 import GUI.PopUpWindows.CreateNewGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -31,12 +32,13 @@ public class MainWindow extends Application
     private VBox lobbyLayout;
     private BorderPane gameLayout;
     private BorderPane waitLayout;
+    private Label actualPlayerLabel;
 
     private ClientConnection clientConnection;
 
     private Board board;
 
-    public static void main(String[] args)
+    public static void main (String[] args)
     {
         launch(args);
     }
@@ -59,10 +61,11 @@ public class MainWindow extends Application
         setMenuBar();
         setEntryLayout();
 
-        Scene scene = new Scene(mainLayout,300,200);
+        Scene scene = new Scene(mainLayout, 300, 200);
         scene.getStylesheets().add("SceneStyle.css");
         window.setScene(scene);
         window.show();
+        window.setOnCloseRequest(e -> System.exit(0));
     }
 
     private void setMenuBar ()
@@ -74,7 +77,7 @@ public class MainWindow extends Application
         options = new Menu("Opcje");
         MenuItem display = new MenuItem("Wyświetlanie");
         MenuItem connection = new MenuItem("Połączenie");
-        options.getItems().addAll(display,connection);
+        options.getItems().addAll(display, connection);
 
 
         Label gameRulesWorkaround = new Label("Zasady Gry");
@@ -89,7 +92,7 @@ public class MainWindow extends Application
 
         menuBar.getMenus().addAll(options, gameRules, info);
         mainLayout.setTop(menuBar);
-        BorderPane.setMargin(menuBar,new Insets(0,0,20,0));
+        BorderPane.setMargin(menuBar, new Insets(0, 0, 20, 0));
     }
 
     private void setEntryLayout ()
@@ -107,14 +110,14 @@ public class MainWindow extends Application
             try
             {
                 boolean isFree = clientConnection.setNickname(userInput.getText());
-                if(isFree)
+                if (isFree)
                 {
+                    window.setTitle(window.getTitle() + "-" + clientConnection.getNickname());
                     setLobbyLayout();
-                }
-                else
+                } else
                 {
                     userInput.setText("");
-                    if(!entryLayout.getChildren().contains(errorLabel))
+                    if (!entryLayout.getChildren().contains(errorLabel))
                         entryLayout.getChildren().add(errorLabel);
                 }
             }
@@ -127,11 +130,12 @@ public class MainWindow extends Application
 
         entryLayout.getChildren().addAll(nicknameLabel, userInput);
         mainLayout.setCenter(entryLayout);
+
+
     }
 
     private void setLobbyLayout () throws ClassNotFoundException, IOException
     {
-        window.setTitle(window.getTitle() + "-" + clientConnection.getNickname());
         lobbyLayout = new VBox(10);
         lobbyLayout.setPadding(new Insets(10));
 
@@ -139,13 +143,15 @@ public class MainWindow extends Application
 
         Button newGameButton = new Button("Nowa Gra");
         newGameButton.setOnAction(e -> {
-            try{
+            try
+            {
                 SingleGameInfo gameInfo = CreateNewGameWindow.displayWindow();
-                if(!clientConnection.createNewGame(gameInfo))
+                if (!clientConnection.createNewGame(gameInfo))
                     System.out.println("gameAlreadyexists");
                 clientConnection.connectToGame(gameInfo);
                 setWaitLayout();
-            }catch (IOException | ClassNotFoundException | InterruptedException ex)
+            }
+            catch (IOException | ClassNotFoundException | InterruptedException ex)
             {
                 ServerErrorWindow.displayWindow();
             }
@@ -179,15 +185,15 @@ public class MainWindow extends Application
         });
 
         HBox hBox = new HBox(10);
-        hBox.getChildren().addAll(newGameButton,joinGameButton, refreshButton);
-        lobbyLayout.getChildren().addAll(tableInfoTableView,hBox);
-        lobbyLayout.setMinSize(500,800);
+        hBox.getChildren().addAll(newGameButton, joinGameButton, refreshButton);
+        lobbyLayout.getChildren().addAll(tableInfoTableView, hBox);
+        lobbyLayout.setMinSize(500, 800);
         mainLayout.setCenter(lobbyLayout);
         window.setWidth(433);
         window.setHeight(600);
     }
 
-    private void setWaitLayout() throws IOException, ClassNotFoundException, InterruptedException
+    private void setWaitLayout () throws IOException, ClassNotFoundException, InterruptedException
     {
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10));
@@ -204,28 +210,48 @@ public class MainWindow extends Application
         setGameLayout();
     }
 
-    private void setGameLayout() throws IOException, ClassNotFoundException, InterruptedException
+    private void setGameLayout () throws IOException, ClassNotFoundException, InterruptedException
     {
         Thread.sleep(15000);
         BoardInfo boardInfo = clientConnection.getBoard();
 
         board = new Board(boardInfo, clientConnection, this);
+        clientConnection.setBoard(board);
 
         gameLayout = new BorderPane();
         gameLayout.setCenter(board.printBoard());
 
-        Label label = new Label("abc");
-        label.setText(clientConnection.getActualPlayer());
-        gameLayout.setRight(label);
+        VBox vBox = new VBox(10);
+        actualPlayerLabel = new Label("c");
+        setActualPlayer(clientConnection.getActualPlayer());
+
+        Button endOfMoveButton = new Button("Koniec ruchu");
+        endOfMoveButton.setOnAction(e -> {
+            try
+            {
+                sendEndOfMove();
+                clientConnection.startReadGameData();
+            }
+            catch (IOException | ClassNotFoundException ex)
+            {
+                ServerErrorWindow.displayWindow();
+            }
+        });
+        vBox.getChildren().addAll(endOfMoveButton, actualPlayerLabel);
+
+        gameLayout.setTop(vBox);
         gameLayout.setPadding(new Insets(10));
 
         mainLayout.setCenter(gameLayout);
 
         window.setWidth(1000);
         window.setHeight(950);
+
+        if (!clientConnection.getActualPlayer().equals(clientConnection.getNickname()))
+            clientConnection.startReadGameData();
     }
 
-    private TableView<SingleGameInfo> prepareTableForSingleGameInfo() throws ClassNotFoundException, IOException
+    private TableView<SingleGameInfo> prepareTableForSingleGameInfo () throws ClassNotFoundException, IOException
     {
         TableView<SingleGameInfo> tableInfoTableView = new TableView<>();
 
@@ -249,10 +275,19 @@ public class MainWindow extends Application
         return tableInfoTableView;
     }
 
-    public void repaintGame()
+    public void repaintGame ()
     {
         gameLayout.setCenter(board.printBoard());
     }
 
+    public void setActualPlayer (String nickname)
+    {
+            actualPlayerLabel.setText(nickname);
+    }
 
+    public void sendEndOfMove () throws IOException, ClassNotFoundException
+    {
+        clientConnection.endOfMove();
+        setActualPlayer(clientConnection.getActualPlayer());
+    }
 }

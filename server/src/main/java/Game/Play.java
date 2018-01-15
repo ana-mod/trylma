@@ -87,4 +87,9 @@ public class Play {
 
 		 return piece.move(player, move.x2, move.y2);
 	}
+
+	public void endOfMove()
+	{
+		actualPlayer = players.get((players.indexOf(actualPlayer)+1)%players.size());
+	}
 }

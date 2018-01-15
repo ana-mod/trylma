@@ -3,6 +3,7 @@ package GameInfo;
 import Connection.ClientConnection;
 import GUI.MainWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -57,10 +58,13 @@ public class Board
                     circle.setOnMouseClicked(e -> {
                         try
                         {
-                            Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
-                            Boolean hasMoved = player.sendNewMove(mv);
-                            if(hasMoved)
-                                this.move(mv);
+                            if(selected!= null)
+                            {
+                                Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
+                                Boolean hasMoved = player.sendNewMove(mv);
+                                if (hasMoved)
+                                    this.move(mv);
+                            }
                         }
                         catch (IOException | ClassNotFoundException ex)
                         {
@@ -137,11 +141,16 @@ public class Board
                 {
                     ((Circle) c).setLayoutX(getLayoutXFromIndex(move.x2, move.y2));
                     ((Circle) c).setLayoutY(getLayoutYFromIndex(move.x2, move.y2));
-                    window.repaintGame();
+                    Platform.runLater(() -> window.repaintGame());
                     return;
                 }
             }
         }
+    }
+
+    public void setActualPlayer(String s)
+    {
+        Platform.runLater(() -> window.setActualPlayer(s));
     }
 
     private int getLayoutYFromIndex(int x, int y)
@@ -153,6 +162,4 @@ public class Board
     {
         return (y+1)*50 + (x%2)*25;
     }
-
-
 }
