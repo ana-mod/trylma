@@ -8,21 +8,21 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ServerErrorWindow
+public class EndGameWindow
 {
-    private static ServerErrorWindow instance;
+    private static EndGameWindow instance;
 
     private Stage window;
     private Scene scene;
     private VBox layout;
     private Label messageBox;
 
-    private String message = "Błąd Połączenia z serverem";
+    private String message = "Koniec gry";
 
-    private ServerErrorWindow()
+    private EndGameWindow()
     {
         window = new Stage();
-        window.setTitle("Server Connection Error");
+        window.setTitle("Koniec Gry");
         window.initModality(Modality.APPLICATION_MODAL);
         window.setMinWidth(250);
 
@@ -30,7 +30,7 @@ public class ServerErrorWindow
 
         messageBox = new Label(message);
 
-        Button exitButton = new Button("exit");
+        Button exitButton = new Button("wyjscie");
         exitButton.setOnAction(e -> System.exit(-1));
 
         layout = new VBox(10);
@@ -51,11 +51,11 @@ public class ServerErrorWindow
         }
         else
         {
-            synchronized (ServerErrorWindow.class)
+            synchronized (GUI.PopUpWindows.ServerErrorWindow.class)
             {
                 if (instance == null)
                 {
-                    instance = new ServerErrorWindow();
+                    instance = new EndGameWindow();
                 }
             }
             instance.display();

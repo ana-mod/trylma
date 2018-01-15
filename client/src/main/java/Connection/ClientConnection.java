@@ -1,11 +1,10 @@
 package Connection;
 
+import GUI.PopUpWindows.EndGameWindow;
 import GUI.PopUpWindows.ServerErrorWindow;
 import GameInfo.*;
-import javafx.application.Application;
+
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -18,8 +17,6 @@ public class ClientConnection
     private ObjectInputStream input;
     private Socket socket;
     private String nickname;
-
-    private BooleanProperty isGameStarted = new  SimpleBooleanProperty(false);
 
     public String getNickname ()
     {
@@ -165,6 +162,10 @@ public class ClientConnection
                         board.setActualPlayer(actual);
                         if(actual.equals(nickname))
                             this.interrupt();
+                    }
+                    else if(msg instanceof EndGame)
+                    {
+                        Platform.runLater( () -> EndGameWindow.displayWindow());
                     }
                 }
                 catch (IOException | ClassNotFoundException ex)

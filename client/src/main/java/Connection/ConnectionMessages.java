@@ -14,6 +14,7 @@ class GameAlreadyExists implements Serializable {}
 class GetBoard implements Serializable {}
 class GetActualPlayer implements Serializable {}
 class EndOfMove implements Serializable {}
+class EndGame implements Serializable {}
 
 class CreateNewGame implements Serializable
 {

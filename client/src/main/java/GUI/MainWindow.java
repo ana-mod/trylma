@@ -76,7 +76,9 @@ public class MainWindow extends Application
 
         options = new Menu("Opcje");
         MenuItem display = new MenuItem("Wyświetlanie");
+        display.setDisable(true);
         MenuItem connection = new MenuItem("Połączenie");
+        connection.setDisable(true);
         options.getItems().addAll(display, connection);
 
 
@@ -130,8 +132,6 @@ public class MainWindow extends Application
 
         entryLayout.getChildren().addAll(nicknameLabel, userInput);
         mainLayout.setCenter(entryLayout);
-
-
     }
 
     private void setLobbyLayout () throws ClassNotFoundException, IOException
@@ -158,7 +158,6 @@ public class MainWindow extends Application
             {
                 ServerErrorWindow.displayWindow();
             }
-
         });
 
         Button joinGameButton = new Button("Połącz");
