@@ -277,9 +277,9 @@ public class GameServer extends Thread
             clietConnections.remove(this);
             if(game!=null)
             {
-                game.removePlayer(this);
                 if(this.equals(game.getActualPlayer()))
                     notifyAllPlayersExceptOne(game, new EndOfMove(), this);
+                game.removePlayer(this);
             }
         }
 

@@ -2,6 +2,7 @@ package Test;
 
 import static org.junit.Assert.*;
 
+import Game.BasicPlayer;
 import org.junit.Test;
 
 import Game.Play;
@@ -122,6 +123,6 @@ public class BoardTest {
 		assertEquals(pl.getBoard().getPieces().size(), 60);
 		
 	}
-	
+
 }
 
