@@ -16,7 +16,11 @@ public class GameRulesWindow
     private VBox layout;
     private Label messageBox;
 
-    private String message = "aaaa zasady gry";
+    private String message = "Celem gry jest przeprowadzenie swoich pionków do przeciwległego narożnika planszy." +
+            "Można przesuwać pionek o jedno pole albo przeskakiwać sąsiadujące pionki." +
+            "Po przeskoczeniu jednego pionka można przeskoczyć kolejny." +
+            "Nie ma zbijania pionów przeciwnika a wygrywa ten z graczy, który jako pierwszy przeprowadzi wszystkie swoje pionki." +
+            "\n\nŹródło : pl.wikipedia.org";
 
     private GameRulesWindow()
     {
@@ -26,6 +30,8 @@ public class GameRulesWindow
         window.setMinWidth(250);
 
         messageBox = new Label(message);
+        messageBox.setMaxWidth(230);
+        messageBox.setWrapText(true);
 
         layout = new VBox(10);
         layout.setPadding(new Insets(10));
