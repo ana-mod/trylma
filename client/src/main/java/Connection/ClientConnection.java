@@ -184,4 +184,12 @@ public class ClientConnection
         readGameData = new ReadGameData();
         readGameData.start();
     }
+
+    public boolean isReading()
+    {
+        if(readGameData!=null)
+            return readGameData.isAlive();
+        else
+            return false;
+    }
 }

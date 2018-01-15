@@ -58,12 +58,15 @@ public class Board
                     circle.setOnMouseClicked(e -> {
                         try
                         {
-                            if(selected!= null)
+                            if(!clientConnection.isReading())
                             {
-                                Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
-                                Boolean hasMoved = player.sendNewMove(mv);
-                                if (hasMoved)
-                                    this.move(mv);
+                                if (selected != null)
+                                {
+                                    Move mv = new Move(getIndexX(selected), getIndexY(selected), getIndexX(circle), getIndexY(circle));
+                                    Boolean hasMoved = player.sendNewMove(mv);
+                                    if (hasMoved)
+                                        this.move(mv);
+                                }
                             }
                         }
                         catch (IOException | ClassNotFoundException ex)
@@ -87,23 +90,24 @@ public class Board
                     circle.setFill(colorHashMap.get(boardInfo.getPieces()[i][j]));
 
                     circle.setOnMouseClicked(e -> {
-                        if(selected == null)
+                        if (!clientConnection.isReading())
                         {
-                            previus = (Color) circle.getFill();
-                            circle.setFill(Color.AQUAMARINE);
-                            selected = circle;
-                        }
-                        else if(circle.equals(selected))
-                        {
-                            selected.setFill(previus);
-                            selected=null;
-                        }
-                        else
-                        {
-                            selected.setFill(previus);
-                            previus = (Color) circle.getFill();
-                            circle.setFill(Color.AQUAMARINE);
-                            selected = circle;
+                            if (selected == null)
+                            {
+                                previus = (Color) circle.getFill();
+                                circle.setFill(Color.AQUAMARINE);
+                                selected = circle;
+                            } else if (circle.equals(selected))
+                            {
+                                selected.setFill(previus);
+                                selected = null;
+                            } else
+                            {
+                                selected.setFill(previus);
+                                previus = (Color) circle.getFill();
+                                circle.setFill(Color.AQUAMARINE);
+                                selected = circle;
+                            }
                         }
                     });
 
@@ -161,5 +165,14 @@ public class Board
     private int getLayoutXFromIndex(int x, int y)
     {
         return (y+1)*50 + (x%2)*25;
+    }
+
+    public void eraseSelection()
+    {
+        if(selected!=null)
+        {
+            selected.setFill(previus);
+            selected = null;
+        }
     }
 }

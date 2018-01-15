@@ -147,7 +147,10 @@ public class MainWindow extends Application
             {
                 SingleGameInfo gameInfo = CreateNewGameWindow.displayWindow();
                 if (!clientConnection.createNewGame(gameInfo))
-                    System.out.println("gameAlreadyexists");
+                {
+                    setLobbyLayout();
+                    return;
+                }
                 clientConnection.connectToGame(gameInfo);
                 setWaitLayout();
             }
@@ -229,8 +232,12 @@ public class MainWindow extends Application
         endOfMoveButton.setOnAction(e -> {
             try
             {
-                sendEndOfMove();
-                clientConnection.startReadGameData();
+                if(!clientConnection.isReading())
+                {
+                    sendEndOfMove();
+                    board.eraseSelection();
+                    clientConnection.startReadGameData();
+                }
             }
             catch (IOException | ClassNotFoundException ex)
             {
