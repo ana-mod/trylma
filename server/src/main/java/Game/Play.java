@@ -10,32 +10,15 @@ public class Play {
 	private int numberOfPlayers;
 	public ArrayList<Player> players = new ArrayList<Player>(); 
 	private Board board;
-
-	private boolean isStarted = false;
 	private String title;
+	private boolean isStarted = false;
+
 	private Piece previousMovedPiece = null;
 	private int movesMade =0;
-
-	public Player getActualPlayer ()
-	{
-		return actualPlayer;
-	}
-
 	private Player actualPlayer;
 
-	public boolean isStarted ()
-	{
-		return isStarted;
-	}
-
-	public String getTitle ()
-	{
-		return title;
-	}
-
-	public void setTitle (String title)
-	{
-		this.title = title;
+	public Play(int number){
+		this.numberOfPlayers = number;
 	}
 
 	public void addPlayer(Player player) {
@@ -53,27 +36,10 @@ public class Play {
 		createBoard();
 	}
 	
-	public Play(int number){
-		this.numberOfPlayers = number;
-	}
-
-	public int getNumberOfPlayers() {
-		return numberOfPlayers;
-	}
-
-	public void setNumberOfPlayers(int numberOfPlayers) {
-		this.numberOfPlayers = numberOfPlayers;
-	}
-	
 	public void createBoard(){
 		board = new Board(players);
 		board.createPieces();
 		board.addPiecesPerPlayer();
-		
-	}
-	
-	public Board getBoard(){
-		return board;
 	}
 
 	public boolean move(Player player, Move move)
@@ -136,5 +102,33 @@ public class Play {
 			}
 		}
 		else players.remove(player);
+	}
+
+	public Player getActualPlayer ()
+	{
+		return actualPlayer;
+	}
+
+	public boolean isStarted ()
+	{
+		return isStarted;
+	}
+
+	public String getTitle ()
+	{
+		return title;
+	}
+
+	public void setTitle (String title)
+	{
+		this.title = title;
+	}
+
+	public int getNumberOfPlayers() {
+		return numberOfPlayers;
+	}
+
+	public Board getBoard(){
+		return board;
 	}
 }
