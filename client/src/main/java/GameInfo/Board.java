@@ -148,9 +148,9 @@ public class Board
         }
     }
 
-    public void setActualPlayer()
+    public void setActualPlayer(String s)
     {
-        Platform.runLater(() -> window.setActualPlayer());
+        Platform.runLater(() -> window.setActualPlayer(s));
     }
 
     private int getLayoutYFromIndex(int x, int y)

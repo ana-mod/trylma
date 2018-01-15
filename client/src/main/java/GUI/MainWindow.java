@@ -223,7 +223,7 @@ public class MainWindow extends Application
 
         VBox vBox = new VBox(10);
         actualPlayerLabel = new Label("c");
-        setActualPlayer();
+        setActualPlayer(clientConnection.getActualPlayer());
 
         Button endOfMoveButton = new Button("Koniec ruchu");
         endOfMoveButton.setOnAction(e -> {
@@ -280,22 +280,14 @@ public class MainWindow extends Application
         gameLayout.setCenter(board.printBoard());
     }
 
-    public void setActualPlayer ()
+    public void setActualPlayer (String nickname)
     {
-        try
-        {
-            actualPlayerLabel.setText(clientConnection.getActualPlayer());
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            ServerErrorWindow.displayWindow();
-        }
-
+            actualPlayerLabel.setText(nickname);
     }
 
     public void sendEndOfMove () throws IOException, ClassNotFoundException
     {
         clientConnection.endOfMove();
-        setActualPlayer();
+        setActualPlayer(clientConnection.getActualPlayer());
     }
 }

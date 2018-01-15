@@ -13,7 +13,8 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClientConnection
-{    private ObjectOutputStream output;
+{
+    private ObjectOutputStream output;
     private ObjectInputStream input;
     private Socket socket;
     private String nickname;
@@ -160,8 +161,9 @@ public class ClientConnection
                     }
                     else if (msg instanceof EndOfMove)
                     {
-                        board.setActualPlayer();
-                        if(getActualPlayer().equals(nickname))
+                        String actual = getActualPlayer();
+                        board.setActualPlayer(actual);
+                        if(actual.equals(nickname))
                             this.interrupt();
                     }
                 }
