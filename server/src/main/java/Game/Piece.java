@@ -71,10 +71,14 @@ public class Piece {
 			this.owner!=player ||			// if player isn't owner of this piece, return;
 			!isMovePossible(row, col) ||		// if piece wants to make wrong move, return;
 			board.isOccupied(row, col)) return false;		// if piece wants to make move on occupied field, return
-
+		
+		outerif:
 		if(isInDest) 
 		{
-			for(Point point : dest) if(point.x==row && point.y==col) break;
+			for(Point point : dest) 
+			{
+				if(point.x==row && point.y==col) break outerif;
+			}
 			return false;									//if piece is in its destination triangle and wants to leave it, return;
 		}
 		//else - move is made:
