@@ -90,6 +90,7 @@ public class GameServer extends Thread
             }
             catch (IOException e)
             {
+                delete();
             }
         }
 
@@ -105,7 +106,7 @@ public class GameServer extends Thread
             }
             catch (IOException | ClassNotFoundException e)
             {
-                System.out.println(e.getMessage());
+                delete();
             }
             start();
         }
@@ -123,14 +124,13 @@ public class GameServer extends Thread
                 {
                     if (msg.equals(ch.getNickname()) && !ch.equals(this))
                     {
-                        output.writeObject(new NickAlreadyTaken());
+                        notify(new NickAlreadyTaken());
                         free = false;
                     }
                 }
-
                 if(free)
                 {
-                    output.writeObject(new TaskCompleted());
+                    notify(new TaskCompleted());
                     this.nickname = msg;
                 }
             }
@@ -181,28 +181,46 @@ public class GameServer extends Thread
                     }
                     else if(msg instanceof GetActualPlayer)
                     {
-                        output.writeObject(game.getActualPlayer().getNickname());
+                        notify(game.getActualPlayer().getNickname());
                     }
                     else if(msg instanceof Move)
                     {
                         boolean isMade = game.move(this,(Move) msg);
-                        output.writeObject(isMade);
+                        notify(isMade);
+
                         if(isMade)
                             notifyAllPlayersExceptOne(game, (Move) msg, this);
                     }
                     else if(msg instanceof EndOfMove)
                     {
                         game.endOfMove();
+
+                        if(game.getBoard().end(this))
+                        {
+                            notify(new EndGame());
+                            game.removePlayer(this);
+                        }
+
                         notifyAllPlayersExceptOne(game, msg, this);
                     }
                 }
                 catch (IOException | ClassNotFoundException e)
                 {
-                    System.out.println(e.getMessage());
+                    delete();
                     break;
                 }
             }
+        }
 
+        private void delete()
+        {
+            clietConnections.remove(this);
+            if(game!=null)
+            {
+                game.removePlayer(this);
+                if(this.equals(game.getActualPlayer()))
+                    notifyAllPlayersExceptOne(game, new EndOfMove(), this);
+            }
         }
 
         public void move ()
@@ -217,6 +235,7 @@ public class GameServer extends Thread
             output.writeObject(new TaskCompleted());
         }
 
+        /*
         private void waitForOtherPlayers() throws IOException
         {
             while(!game.isStarted())
@@ -231,7 +250,7 @@ public class GameServer extends Thread
 
                 }
             }
-        }
+        }*/
     }
 
     private void createNewGame(ClientHandler clientHandler, SingleGameInfo singleGameInfo) throws IOException
@@ -248,8 +267,6 @@ public class GameServer extends Thread
         games.add(p);
         clientHandler.output.writeObject(new TaskCompleted());
     }
-
-
 
     private void sendGamesInfo(ClientHandler clientHandler) throws IOException
     {

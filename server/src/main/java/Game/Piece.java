@@ -50,6 +50,11 @@ public class Piece {
 			return this;
 		//return null;
 	}
+
+	public void resetJump()
+	{
+		this.jump = false;
+	}
 	
 	
 	public boolean move(Player player, int row, int col){
