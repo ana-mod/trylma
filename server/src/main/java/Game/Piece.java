@@ -72,6 +72,11 @@ public class Piece {
 			!isMovePossible(row, col) ||		// if piece wants to make wrong move, return;
 			board.isOccupied(row, col)) return false;		// if piece wants to make move on occupied field, return
 		
+		if(jump)
+		{
+			if(Math.abs(this.row-row)!=2 && Math.abs(this.col-col)!=2) return false; 
+		}
+		
 		outerif:
 		if(isInDest) 
 		{
